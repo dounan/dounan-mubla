@@ -1,0 +1,6 @@
+*.swp
+*.swo
+build-stats*.json
+build/
+node_modules/
+

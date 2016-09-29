@@ -1,0 +1,8 @@
+
+.wrapper {
+  --test-var: "20px";
+  background: cornsilk;
+  display: flex;
+  font-size: var(--test-var);
+}
+

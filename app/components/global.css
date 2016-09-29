@@ -1,0 +1,8 @@
+/**
+ * Avoid putting things in this file if possible.
+ * Prefer locally scoped CSS files per component.
+ */
+body {
+  font-family: var(--font-regular);
+}
+
