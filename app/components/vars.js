@@ -3,6 +3,7 @@
  * webpack.config.js.
  */
 module.exports = {
+  blue: '#3377d7',
   fontRegular: "'Open Sans 600', sans-serif",
   fontBold: "'Open Sans 600', sans-serif"
 }

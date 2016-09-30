@@ -50,6 +50,10 @@ const common = {
   ],
   resolve: {
     extensions: ['', '.js', '.jsx']
+  },
+  // Mock node.js fs module. mime.js sub-dependency tries to require it.
+  node: {
+    fs: 'empty'
   }
 };
 
@@ -79,8 +83,8 @@ switch(process.env.npm_lifecycle_event) {
           name: 'vendor',
           entries: Object.keys(pkg.dependencies)
         }),
-        parts.extractCSS(PATHS.app),
         parts.loadFonts(PATHS.app),
+        parts.extractCSS(PATHS.app),
         // purifyCSS must come after extractCSS
         // NOTE: commented out because it removes classes with css-loader local scope
         // parts.purifyCSS([PATHS.build]),

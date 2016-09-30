@@ -11,7 +11,8 @@ const postcssPlugins = [
   cssvariables({
     variables: {
       '--font-regular': jsvars.fontRegular,
-      '--font-bold': jsvars.fontBold
+      '--font-bold': jsvars.fontBold,
+      '--blue': jsvars.blue
     }
   })
 ];
