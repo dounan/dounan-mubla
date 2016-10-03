@@ -1,5 +1,6 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
+import createApiMiddleware from "../api/middleware"
 
 import rootReducer from '../reducers'
 
@@ -9,13 +10,16 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function getMiddlewares() {
+  const apiMiddleware = createApiMiddleware();
   switch (process.env.NODE_ENV) {
     case 'production':
       return [
+        apiMiddleware,
         thunk
       ];
     default:
       return [
+        apiMiddleware,
         thunk
       ];
   }
