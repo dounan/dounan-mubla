@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react'
 import Button from './Button'
-import TestComponent from './TestComponent'
 
 // TODO: use PropTypes.shape
 const PT_MEDIA = PropTypes.object;

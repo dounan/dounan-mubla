@@ -9,6 +9,7 @@ import {syncHistoryWithStore} from 'react-router-redux'
 import * as actions from '../actions'
 import configureStore from '../store/configureStore'
 import BrowseContainer from './BrowseContainer'
+import TestComponent from './TestComponent'
 
 let DevTools = null;
 if (process.env.NODE_ENV !== 'production') {
@@ -41,6 +42,7 @@ ReactDOM.render(
     <AppContainer>
       <Router history={history}>
         <Route path="/" component={BrowseContainer} />
+        <Route path="/test" component={TestComponent} />
       </Router>
     </AppContainer>
   </Provider>,
