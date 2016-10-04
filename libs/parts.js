@@ -111,6 +111,20 @@ exports.extractCSS = function(paths) {
   };
 }
 
+exports.loadFonts = function(paths) {
+  return {
+    module: {
+      loaders: [
+        {
+          test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
+          loader: 'url',
+          include: paths
+        }
+      ]
+    }
+  };
+}
+
 exports.minify = function() {
   return {
     plugins: [

@@ -80,6 +80,7 @@ switch(process.env.npm_lifecycle_event) {
           entries: Object.keys(pkg.dependencies)
         }),
         parts.extractCSS(PATHS.app),
+        parts.loadFonts(PATHS.app),
         // purifyCSS must come after extractCSS
         // NOTE: commented out because it removes classes with css-loader local scope
         // parts.purifyCSS([PATHS.build]),
@@ -102,7 +103,8 @@ switch(process.env.npm_lifecycle_event) {
           host: process.env.HOST,
           port: process.env.PORT
         }),
-        parts.setupCSS(PATHS.app)
+        parts.setupCSS(PATHS.app),
+        parts.loadFonts(PATHS.app)
     );
 }
 
