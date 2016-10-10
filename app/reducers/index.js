@@ -1,5 +1,6 @@
 import {combineReducers} from "redux"
 import {routerReducer} from 'react-router-redux'
+import uuid from 'node-uuid'
 import * as actions from '../actions'
 
 function instagram(state={}, action) {
@@ -39,8 +40,57 @@ function media(state={}, action) {
         mediaList: state.mediaList.concat(action.mediaList),
         instaPagination: action.instaPagination
       };
+    case actions.EXTEND_MEDIA_LIST:
+      return {
+        ...state,
+        mediaList: extendMediaList(state.mediaList, action.numItems)
+      };
+    case actions.RANDOMIZE_MEDIA_ASPECT_RATIOS:
+      const {min, max} = action;
+      return {
+        ...state,
+        mediaList: (state.mediaList || []).map(randomizeAspectRatio.bind(null, min, max))
+      };
   }
   return state;
+}
+
+function cloneMedia(media) {
+  const newMedia = JSON.parse(JSON.stringify(media));
+  newMedia.id = uuid.v4();
+  return newMedia;
+}
+
+function extendMediaList(mediaList, numItems) {
+  if (!mediaList) {
+    return mediaList;
+  }
+  const n = mediaList.length;
+  let items = [];
+  for (let i = 0; i < numItems; i++) {
+    const media = i < n ? mediaList[i] : cloneMedia(mediaList[i % n]);
+    items.push(media);
+  }
+  return items;
+}
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function randomizeAspectRatio(min, max, media) {
+  const newMedia = cloneMedia(media);
+  const images = newMedia.images;
+  const r = rand(min, max);
+  for (let i in images) {
+    const img = images[i];
+    if (r < 1) {
+      img.width = img.height * r;
+    } else {
+      img.height = img.width / r;
+    }
+  }
+  return newMedia;
 }
 
 export default combineReducers({

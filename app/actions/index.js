@@ -101,3 +101,20 @@ export const checkInstaAccessToken = () => (dispatch, getState) => {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Debug actions
+////////////////////////////////////////////////////////////////////////////////
+
+export const EXTEND_MEDIA_LIST = 'EXTEND_MEDIA_LIST';
+export const extendMediaList = (numItems) => ({
+  type: EXTEND_MEDIA_LIST,
+  numItems
+});
+
+export const RANDOMIZE_MEDIA_ASPECT_RATIOS = 'RANDOMIZE_MEDIA_ASPECT_RATIOS';
+export const randomizeMediaAspectRatios = (min, max) => ({
+  type: RANDOMIZE_MEDIA_ASPECT_RATIOS,
+  min,
+  max
+});
+
