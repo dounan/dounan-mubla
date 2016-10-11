@@ -1,7 +1,33 @@
+import {Set} from 'immutable'
 import {combineReducers} from "redux"
 import {routerReducer} from 'react-router-redux'
 import uuid from 'node-uuid'
 import * as actions from '../actions'
+
+const INIT_BROWSE = {
+  selectedMediaIds: Set()
+};
+
+function browse(state=INIT_BROWSE, action) {
+  switch(action.type) {
+    case actions.BROWSE_SELECT_MEDIA:
+      return {
+        ...state,
+        selectedMediaIds: state.selectedMediaIds.union(action.mediaIds)
+      }
+    case actions.BROWSE_DESELECT_MEDIA:
+      return {
+        ...state,
+        selectedMediaIds: state.selectedMediaIds.subtract(action.mediaIds)
+      }
+    case actions.BROWSE_DESELECT_ALL_MEDIA:
+      return {
+        ...state,
+        selectedMediaIds: Set()
+      }
+  }
+  return state;
+};
 
 function instagram(state={}, action) {
   switch (action.type) {
@@ -12,7 +38,7 @@ function instagram(state={}, action) {
       };
   }
   return state;
-}
+};
 
 function media(state={}, action) {
   switch (action.type) {
@@ -53,13 +79,13 @@ function media(state={}, action) {
       };
   }
   return state;
-}
+};
 
 function cloneMedia(media) {
   const newMedia = JSON.parse(JSON.stringify(media));
   newMedia.id = uuid.v4();
   return newMedia;
-}
+};
 
 function extendMediaList(mediaList, numItems) {
   if (!mediaList) {
@@ -72,11 +98,11 @@ function extendMediaList(mediaList, numItems) {
     items.push(media);
   }
   return items;
-}
+};
 
 function rand(min, max) {
   return Math.random() * (max - min) + min;
-}
+};
 
 function randomizeMediaListAspectRatios(min, max, mediaList) {
   if (!mediaList) {
@@ -90,7 +116,7 @@ function randomizeMediaListAspectRatios(min, max, mediaList) {
     items.push(randomizeAspectRatio(min, max, mediaList[i]));
   }
   return items;
-}
+};
 
 function randomizeAspectRatio(min, max, media) {
   const images = media.images;
@@ -104,9 +130,10 @@ function randomizeAspectRatio(min, max, media) {
     }
   }
   return media;
-}
+};
 
 export default combineReducers({
+  browse: browse,
   instagram: instagram,
   media: media,
   routing: routerReducer,

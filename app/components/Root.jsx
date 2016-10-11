@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import Header from './Header'
+import HeaderContainer from './HeaderContainer'
 import * as pt from './propTypes'
 
 class Root extends Component {
@@ -12,7 +12,7 @@ class Root extends Component {
     const {routeLocation, children} = this.props;
     return (
       <div>
-        <Header routeLocation={routeLocation} />
+        <HeaderContainer routeLocation={routeLocation} />
         {children}
       </div>
     );

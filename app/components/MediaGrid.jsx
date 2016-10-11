@@ -129,20 +129,15 @@ class MediaGrid extends Component {
     const selected = props.selectedMediaIds.subtract(p.selectedMediaIds);
     const deselected = p.selectedMediaIds.subtract(props.selectedMediaIds);
     selected.forEach((id) => {
-      viewsProps = this.select(id);
+      viewsProps = this.setSelected(viewsProps, id, true);
     });
     deselected.forEach((id) => {
-      viewsProps = this.deselect(id);
+      viewsProps = this.setSelected(viewsProps, id, false);
     });
     this.setState({viewsProps});
   };
 
-  select = (mediaId) => this.setSelected(true, mediaId);
-
-  deselect = (mediaId) => this.setSelected(false, mediaId);
-
-  setSelected = (selected, mediaId) => {
-    const viewsProps = this.state.viewsProps;
+  setSelected = (viewsProps, mediaId, selected) => {
     const idx = this._idToIdx[mediaId];
     return viewsProps.updateIn([idx], (p) => ({...p, isSelected: selected}));
   };

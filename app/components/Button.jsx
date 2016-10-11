@@ -1,13 +1,19 @@
 import React, {Component, PropTypes} from 'react'
 
+const EMPTY_STYLE = {
+  background: 'none',
+  border: 'none',
+  outline: 'none',
+  padding: 0,
+  cursor: 'pointer'
+};
+
 const STYLES = {
-  'empty': {
-    background: 'none',
-    border: 'none',
-    outline: 'none',
-    padding: 0,
-    cursor: 'pointer'
-  }
+  empty: EMPTY_STYLE,
+  text: Object.assign({}, EMPTY_STYLE, {
+    color: 'inherit',
+    fontSize: 'inherit'
+  })
 };
 
 class Button extends Component {

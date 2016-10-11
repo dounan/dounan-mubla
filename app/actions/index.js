@@ -100,6 +100,27 @@ function handleInstaError(instaBody) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Browse page
+////////////////////////////////////////////////////////////////////////////////
+
+export const BROWSE_SELECT_MEDIA = 'BROWSE_SELECT_MEDIA';
+export const browseSelectMedia = (mediaIds) => ({
+  type: BROWSE_SELECT_MEDIA,
+  mediaIds
+});
+
+export const BROWSE_DESELECT_MEDIA = 'BROWSE_DESELECT_MEDIA';
+export const browseDeselectMedia = (mediaIds) => ({
+  type: BROWSE_DESELECT_MEDIA,
+  mediaIds
+});
+
+export const BROWSE_DESELECT_ALL_MEDIA = 'BROWSE_DESELECT_ALL_MEDIA';
+export const browseDeselectAllMedia = () => ({
+  type: BROWSE_DESELECT_ALL_MEDIA,
+});
+
+////////////////////////////////////////////////////////////////////////////////
 // Routing
 ////////////////////////////////////////////////////////////////////////////////
 
