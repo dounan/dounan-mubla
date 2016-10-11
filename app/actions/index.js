@@ -2,6 +2,38 @@ import URI from 'urijs'
 import * as api from '../api'
 import * as insta from './instagram'
 
+////////////////////////////////////////////////////////////////////////////////
+// Instagram Authentication
+////////////////////////////////////////////////////////////////////////////////
+
+export const instaAuth = () => (dispatch, getState) => {
+  const u = new URI(window.location);
+  u.hash("");
+  const redirect = encodeURIComponent(u.toString());
+  window.location = `${insta.OAUTH_URL}?client_id=${insta.CLIENT_ID}&redirect_uri=${redirect}&response_type=token`;
+}
+
+export const checkInstaAccessToken = () => (dispatch, getState) => {
+  const u = new URI(window.location);
+  const h = u.hash();
+  let m;
+  if (m = h.match(insta.ACCESS_TOKEN_REGEX)) {
+    dispatch(setInstaAccessToken(m[2]));
+    u.hash(h.replace(insta.ACCESS_TOKEN_REGEX, ''));
+    window.location = u.toString();
+  }
+}
+
+export const SET_INSTA_ACCESS_TOKEN = 'SET_INSTA_ACCESS_TOKEN';
+const setInstaAccessToken = (token) => ({
+  type: SET_INSTA_ACCESS_TOKEN,
+  token
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// Media
+////////////////////////////////////////////////////////////////////////////////
+
 export const REQUEST_MEDIA = 'REQUEST_MEDIA';
 const requestMedia = () => ({
   type: REQUEST_MEDIA
@@ -24,12 +56,6 @@ const receiveMoreMedia = (mediaList, instaPagination) => ({
   type: RECEIVE_MORE_MEDIA,
   mediaList,
   instaPagination
-});
-
-export const SET_INSTA_ACCESS_TOKEN = 'SET_INSTA_ACCESS_TOKEN';
-export const setInstaAccessToken = (token) => ({
-  type: SET_INSTA_ACCESS_TOKEN,
-  token
 });
 
 export const loadMedia = (instaAccessToken) => (dispatch, getState) => {
@@ -81,24 +107,6 @@ function handleMoreMediaSuccess(dispatch, result) {
 
 function handleInstaError(instaBody) {
   throw Error("TODO: handle non 200 instagram response");
-}
-
-export const instaAuth = () => (dispatch, getState) => {
-  const u = new URI(window.location);
-  u.hash("");
-  const redirect = encodeURIComponent(u.toString());
-  window.location = `${insta.OAUTH_URL}?client_id=${insta.CLIENT_ID}&redirect_uri=${redirect}&response_type=token`;
-}
-
-export const checkInstaAccessToken = () => (dispatch, getState) => {
-  const u = new URI(window.location);
-  const h = u.hash();
-  let m;
-  if (m = h.match(insta.ACCESS_TOKEN_REGEX)) {
-    dispatch(setInstaAccessToken(m[2]));
-    u.hash(h.replace(insta.ACCESS_TOKEN_REGEX, ''));
-    window.location = u.toString();
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
