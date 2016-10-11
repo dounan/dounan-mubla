@@ -17,17 +17,28 @@ const WINDOW_SCROLL_TILE_SIZE = 3 * MAX_ROW_H;
 class Container extends Component {
 
   componentWillMount() {
-    const {dispatch, instaToken} = this.props;
-    if (instaToken) {
-      dispatch(actions.loadMedia(instaToken));
+    this.loadMedia(this.props);
+  };
+
+  componentWillReceiveProps(nextProps) {
+    const p = this.props;
+    if (nextProps.instaToken !== p.instaToken) {
+      this.loadMedia(nextProps);
     }
-  }
+  };
 
   render() {
     return (
       <Browse {...this.props} />
     );
-  }
+  };
+
+  loadMedia = (props) => {
+    const {dispatch, instaToken} = props;
+    if (instaToken) {
+      dispatch(actions.loadMedia(instaToken));
+    }
+  };
 }
 
 function toggleItemSelect(stateProps, dispatch, ownProps, media) {

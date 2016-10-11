@@ -1,9 +1,16 @@
 import get from 'lodash/get'
 import uuid from 'node-uuid'
+import URI from 'urijs'
 
-export const OAUTH_URL = 'https://api.instagram.com/oauth/authorize/';
-export const CLIENT_ID = '0f49a3fcf52947538a5649112bb5bf57';
-export const ACCESS_TOKEN_REGEX = /(access_token=([a-f0-9\.]+))/;
+const OAUTH_URL = 'https://api.instagram.com/oauth/authorize/';
+const CLIENT_ID = '0f49a3fcf52947538a5649112bb5bf57';
+
+export function authUrl() {
+  const u = new URI(window.location);
+  u.hash("");
+  const redirect = encodeURIComponent(u.toString());
+  return `${OAUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=token`;
+}
 
 // Converts an instagram media object to mubla media object.
 export function toMedia(o) {

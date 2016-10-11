@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom'
 import {Provider, connect} from 'react-redux'
 import {Router, Route, IndexRoute} from 'react-router'
 import {syncHistoryWithStore} from 'react-router-redux'
+import * as actions from '../actions'
 import configureStore, {ROUTER_HISTORY} from '../store/configureStore'
 import AlbumListContainer from './AlbumListContainer'
 import BrowseContainer from './BrowseContainer'
@@ -22,6 +23,12 @@ let DevTools = require('./DevTools').default;
 // }
 
 class App extends Component {
+
+  componentDidMount() {
+    const {dispatch} = this.props;
+    dispatch(actions.restoreInstaAccessToken());
+  };
+
   render() {
     const {location, children} = this.props;
     return (

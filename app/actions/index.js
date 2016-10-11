@@ -1,24 +1,34 @@
-import URI from 'urijs'
+import get from 'lodash/get'
 import * as api from '../api'
 import * as insta from './instagram'
 import {push} from 'react-router-redux'
+import * as persist from './persist'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Instagram Authentication
 ////////////////////////////////////////////////////////////////////////////////
 
+const INSTA_TOKEN_SAVE_KEY = 'instaToken';
+
 export const instaAuth = () => (dispatch, getState) => {
-  const u = new URI(window.location);
-  u.hash("");
-  const redirect = encodeURIComponent(u.toString());
-  window.location = `${insta.OAUTH_URL}?client_id=${insta.CLIENT_ID}&redirect_uri=${redirect}&response_type=token`;
-}
+  window.location = insta.authUrl();
+};
 
 export const SET_INSTA_ACCESS_TOKEN = 'SET_INSTA_ACCESS_TOKEN';
-export const setInstaAccessToken = (token) => ({
-  type: SET_INSTA_ACCESS_TOKEN,
-  token
-});
+export const setInstaAccessToken = (token) => (dispatch, getState) => {
+  dispatch({
+    type: SET_INSTA_ACCESS_TOKEN,
+    token
+  });
+  persist.save(INSTA_TOKEN_SAVE_KEY, token || '');
+};
+
+export const restoreInstaAccessToken = () => (dispatch, getState) => {
+  const token = persist.load(INSTA_TOKEN_SAVE_KEY);
+  if (token) {
+    dispatch(setInstaAccessToken(token));
+  }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Media
@@ -36,6 +46,11 @@ const receiveMedia = (mediaList, instaPagination) => ({
   instaPagination
 });
 
+export const REQUEST_MEDIA_ERROR = 'REQUEST_MEDIA_ERROR';
+const requestMediaError = () => ({
+  type: REQUEST_MEDIA_ERROR
+});
+
 export const REQUEST_MORE_MEDIA = 'REQUEST_MORE_MEDIA';
 const requestMoreMedia = () => ({
   type: REQUEST_MORE_MEDIA
@@ -48,6 +63,11 @@ const receiveMoreMedia = (mediaList, instaPagination) => ({
   instaPagination
 });
 
+export const REQUEST_MORE_MEDIA_ERROR = 'REQUEST_MORE_MEDIA_ERROR';
+const requestMoreMediaError = () => ({
+  type: REQUEST_MORE_MEDIA_ERROR
+});
+
 export const loadMedia = (instaAccessToken) => (dispatch, getState) => {
   dispatch(requestMedia());
   const params = {
@@ -58,7 +78,7 @@ export const loadMedia = (instaAccessToken) => (dispatch, getState) => {
   };
   return dispatch(api.instaRecentMedia(params))
       .then(handleLoadMediaSuccess.bind(null, dispatch));
-}
+};
 
 function handleLoadMediaSuccess(dispatch, result) {
   const instaBody = result.body;
@@ -67,9 +87,10 @@ function handleLoadMediaSuccess(dispatch, result) {
     const instaPagination = insta.extractPagination(instaBody);
     dispatch(receiveMedia(mediaList, instaPagination));
   } else {
-    handleInstaError(instaBody);
+    dispatch(requestMediaError());
+    handleInstaError(dispatch, instaBody);
   }
-}
+};
 
 export const moreMedia = (instaAccessToken, instaMaxId) => (dispatch, getState) => {
   dispatch(requestMoreMedia());
@@ -82,7 +103,7 @@ export const moreMedia = (instaAccessToken, instaMaxId) => (dispatch, getState) 
   };
   return dispatch(api.instaRecentMedia(params))
       .then(handleMoreMediaSuccess.bind(null, dispatch));
-}
+};
 
 function handleMoreMediaSuccess(dispatch, result) {
   const instaBody = result.body;
@@ -91,13 +112,18 @@ function handleMoreMediaSuccess(dispatch, result) {
     const instaPagination = insta.extractPagination(instaBody);
     dispatch(receiveMoreMedia(mediaList, instaPagination));
   } else {
-    handleInstaError(instaBody);
+    dispatch(requestMoreMediaError());
+    handleInstaError(dispatch, instaBody);
   }
-}
+};
 
-function handleInstaError(instaBody) {
-  throw Error("TODO: handle non 200 instagram response");
-}
+function handleInstaError(dispatch, instaBody) {
+  if (get(instaBody, 'meta.error_type') === 'OAuthAccessTokenException') {
+    dispatch(setInstaAccessToken(null));
+  } else {
+    dispatch(notify('error', get(instaBody, 'meta.error_message')));
+  }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Browse page
@@ -127,6 +153,14 @@ export const browseDeselectAllMedia = () => ({
 export const gotoBrowse = () => push('/');
 
 export const gotoAlbumList = () => push('/albums');
+
+////////////////////////////////////////////////////////////////////////////////
+// Misc
+////////////////////////////////////////////////////////////////////////////////
+
+export const notify = (level, message) => (dispatch, getState) => {
+  alert(message);
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Debug actions
