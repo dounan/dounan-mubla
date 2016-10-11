@@ -11,10 +11,13 @@ import configureStore from '../store/configureStore'
 import BrowseContainer from './BrowseContainer'
 import TestComponent from './TestComponent'
 
-let DevTools = null;
-if (process.env.NODE_ENV !== 'production') {
-  DevTools = require('./DevTools').default;
-}
+// NOTE: show DevTools in production so you can play with the data.
+// Normally you want to omit this from production.
+let DevTools = require('./DevTools').default;
+// let DevTools = null;
+// if (process.env.NODE_ENV !== 'production') {
+//   DevTools = require('./DevTools').default;
+// }
 
 class App extends Component {
 

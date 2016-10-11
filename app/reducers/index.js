@@ -49,7 +49,7 @@ function media(state={}, action) {
       const {min, max} = action;
       return {
         ...state,
-        mediaList: (state.mediaList || []).map(randomizeAspectRatio.bind(null, min, max))
+        mediaList: randomizeMediaListAspectRatios(min, max, state.mediaList)
       };
   }
   return state;
@@ -78,9 +78,22 @@ function rand(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+function randomizeMediaListAspectRatios(min, max, mediaList) {
+  if (!mediaList) {
+    return mediaList;
+  }
+  // Mutate media and put into a new array for efficiency.
+  // Otherwise cloning and storing a copy of media list in memory can crash
+  // the browser for very large media lists (e.g. > 100,000 items).
+  let items = [];
+  for (let i in mediaList) {
+    items.push(randomizeAspectRatio(min, max, mediaList[i]));
+  }
+  return items;
+}
+
 function randomizeAspectRatio(min, max, media) {
-  const newMedia = cloneMedia(media);
-  const images = newMedia.images;
+  const images = media.images;
   const r = rand(min, max);
   for (let i in images) {
     const img = images[i];
@@ -90,7 +103,7 @@ function randomizeAspectRatio(min, max, media) {
       img.height = img.width / r;
     }
   }
-  return newMedia;
+  return media;
 }
 
 export default combineReducers({

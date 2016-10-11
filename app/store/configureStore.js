@@ -4,10 +4,13 @@ import createApiMiddleware from "../api/middleware"
 
 import rootReducer from '../reducers'
 
-let DevTools = null;
-if (process.env.NODE_ENV !== 'production') {
-  DevTools = require('../components/DevTools').default;
-}
+// NOTE: show DevTools in production so you can play with the data.
+// Normally you want to omit this from production.
+let DevTools = require('../components/DevTools').default;
+// let DevTools = null;
+// if (process.env.NODE_ENV !== 'production') {
+//   DevTools = require('../components/DevTools').default;
+// }
 
 function getMiddlewares() {
   const apiMiddleware = createApiMiddleware();
@@ -27,21 +30,14 @@ function getMiddlewares() {
 
 function getStoreEnhancers() {
   var middlewareEnhancer = applyMiddleware(...getMiddlewares());
-  switch (process.env.NODE_ENV) {
-    case 'production':
-      const enhancers = [middlewareEnhancer];
-      // DevTools must come after middleware
-      if (window.devToolsExtension) {
-        enhancers.push(window.devToolsExtension());
-      }
-      return enhancers;
-    default:
-      return [
-        middlewareEnhancer,
-        // DevTools must come after middleware
-        !DevTools || window.devToolsExtension ? window.devToolsExtension() : DevTools.instrument()
-      ];
+  const enhancers = [middlewareEnhancer];
+  // DevTools must come after middleware
+  if (window.devToolsExtension) {
+    enhancers.push(window.devToolsExtension());
+  } else if (DevTools) {
+    enhancers.push(DevTools.instrument());
   }
+  return enhancers;
 }
 
 export default function configureStore(initialState) {
