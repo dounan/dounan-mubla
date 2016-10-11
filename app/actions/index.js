@@ -1,6 +1,7 @@
 import URI from 'urijs'
 import * as api from '../api'
 import * as insta from './instagram'
+import {push} from 'react-router-redux'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Instagram Authentication
@@ -13,19 +14,8 @@ export const instaAuth = () => (dispatch, getState) => {
   window.location = `${insta.OAUTH_URL}?client_id=${insta.CLIENT_ID}&redirect_uri=${redirect}&response_type=token`;
 }
 
-export const checkInstaAccessToken = () => (dispatch, getState) => {
-  const u = new URI(window.location);
-  const h = u.hash();
-  let m;
-  if (m = h.match(insta.ACCESS_TOKEN_REGEX)) {
-    dispatch(setInstaAccessToken(m[2]));
-    u.hash(h.replace(insta.ACCESS_TOKEN_REGEX, ''));
-    window.location = u.toString();
-  }
-}
-
 export const SET_INSTA_ACCESS_TOKEN = 'SET_INSTA_ACCESS_TOKEN';
-const setInstaAccessToken = (token) => ({
+export const setInstaAccessToken = (token) => ({
   type: SET_INSTA_ACCESS_TOKEN,
   token
 });
@@ -108,6 +98,14 @@ function handleMoreMediaSuccess(dispatch, result) {
 function handleInstaError(instaBody) {
   throw Error("TODO: handle non 200 instagram response");
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Routing
+////////////////////////////////////////////////////////////////////////////////
+
+export const gotoBrowse = () => push('/');
+
+export const gotoAlbumList = () => push('/albums');
 
 ////////////////////////////////////////////////////////////////////////////////
 // Debug actions

@@ -10,9 +10,10 @@ const postcssPlugins = [
   autoprefixer,
   cssvariables({
     variables: {
+      '--blue': jsvars.blue,
       '--font-regular': jsvars.fontRegular,
       '--font-bold': jsvars.fontBold,
-      '--blue': jsvars.blue
+      '--gutter': jsvars.gutter + 'px'
     }
   })
 ];
@@ -108,6 +109,20 @@ exports.extractCSS = function(paths) {
     ],
     postcss: function () {
       return postcssPlugins;
+    }
+  };
+}
+
+exports.loadImages = function(paths) {
+  return {
+    module: {
+      loaders: [
+        {
+          test: /\.(jpg|png)$/,
+          loader: 'url?limit=25000',
+          include: paths
+        }
+      ]
     }
   };
 }

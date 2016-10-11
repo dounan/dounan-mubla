@@ -1,14 +1,16 @@
+// Not used. Import to load the file, which applies the global styles.
 import globalcss from './global.css'
 
 import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import {Provider, connect} from 'react-redux'
-import {Router, Route, hashHistory, IndexRoute} from 'react-router'
+import {Router, Route, IndexRoute} from 'react-router'
 import {syncHistoryWithStore} from 'react-router-redux'
-
-import * as actions from '../actions'
-import configureStore from '../store/configureStore'
+import configureStore, {ROUTER_HISTORY} from '../store/configureStore'
+import AlbumListContainer from './AlbumListContainer'
 import BrowseContainer from './BrowseContainer'
+import InstaAccessTokenContainer from './InstaAccessTokenContainer'
+import Root from './Root'
 import TestComponent from './TestComponent'
 
 // NOTE: show DevTools in production so you can play with the data.
@@ -20,34 +22,31 @@ let DevTools = require('./DevTools').default;
 // }
 
 class App extends Component {
-
-  componentDidMount() {
-    this.props.dispatch(actions.checkInstaAccessToken());
-  }
-
   render() {
+    const {location, children} = this.props;
     return (
-      <div>
-        {this.props.children}
+      <Root routeLocation={location}>
+        {children}
         {!DevTools || window.devToolsExtension ? null : <DevTools />}
-      </div>
+      </Root>
     );
   }
 }
 
 const AppContainer = connect()(App);
-
 const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
+const history = syncHistoryWithStore(ROUTER_HISTORY, store);
  
 ReactDOM.render(
   <Provider store={store}>
-    <AppContainer>
-      <Router history={history}>
-        <Route path="/" component={BrowseContainer} />
-        <Route path="/test" component={TestComponent} />
-      </Router>
-    </AppContainer>
+    <Router history={history}>
+      <Route path='/' component={AppContainer}>
+        <IndexRoute component={BrowseContainer} />
+        <Route path='/albums' component={AlbumListContainer} />
+      </Route>
+      <Route path='access_token=:token' component={InstaAccessTokenContainer} />
+      <Route path='/test' component={TestComponent} />
+    </Router>
   </Provider>,
   document.getElementById('app')
 );

@@ -1,0 +1,22 @@
+.navlink {
+  text-decoration: none;
+  color: #aaa;
+  font-size: 16px;
+}
+
+.navlink:hover {
+  color: var(--blue);
+}
+
+.navlink > span {
+  vertical-align: middle;
+}
+
+.active {
+  color: var(--blue);
+}
+
+.icon {
+  margin-right: 5px;
+}
+

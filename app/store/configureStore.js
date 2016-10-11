@@ -1,4 +1,6 @@
 import {createStore, applyMiddleware, compose} from 'redux'
+import {hashHistory} from 'react-router'
+import {routerMiddleware as createRouterMiddleware} from 'react-router-redux'
 import thunk from 'redux-thunk'
 import createApiMiddleware from "../api/middleware"
 
@@ -12,18 +14,23 @@ let DevTools = require('../components/DevTools').default;
 //   DevTools = require('../components/DevTools').default;
 // }
 
+export const ROUTER_HISTORY = hashHistory;
+
 function getMiddlewares() {
   const apiMiddleware = createApiMiddleware();
+  const routerMiddleware = createRouterMiddleware(ROUTER_HISTORY);
   switch (process.env.NODE_ENV) {
     case 'production':
       return [
         apiMiddleware,
-        thunk
+        thunk,
+        routerMiddleware
       ];
     default:
       return [
         apiMiddleware,
-        thunk
+        thunk,
+        routerMiddleware
       ];
   }
 }

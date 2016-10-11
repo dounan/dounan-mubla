@@ -10,3 +10,6 @@ export const VIEWPORT = PropTypes.shape({
   height: PropTypes.number.isRequired
 });
 
+// TODO: use PropTypes.shape
+export const ROUTE_LOCATION = PropTypes.object;
+

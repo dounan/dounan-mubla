@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
-import icons from './icons'
+import {getIcon} from './icons'
 import css from './CheckSelect.css'
 import Button from './Button'
 
@@ -47,7 +47,7 @@ class CheckSelect extends Component {
           styleType='empty'
           className={className}
           onClick={onCheckClick}>
-        <span className={icons.checkCircle} />
+        <span className={getIcon('checkCircle')} />
       </Button>
     );
   };

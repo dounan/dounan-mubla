@@ -4,11 +4,13 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Button from './Button'
 import MediaGrid from './MediaGrid'
 import * as pt from './propTypes'
+import jsvars from './vars'
 
-const SIDE_PADDING = 20;
 const WRAPPER_STYLE = {
-  paddingLeft: SIDE_PADDING,
-  paddingRight: SIDE_PADDING
+  marginTop: jsvars.headerHeight, 
+  paddingTop: jsvars.gutter,
+  paddingLeft: jsvars.gutter,
+  paddingRight: jsvars.gutter
 }
 
 class Browse extends Component {
@@ -70,7 +72,7 @@ class Browse extends Component {
     if (!p.mediaList) {
       return null;
     }
-    const maxWidth = p.windowWidth - 2 * SIDE_PADDING;
+    const maxWidth = p.windowWidth - 2 * jsvars.gutter;
     return (
       <MediaGrid
           mediaList={p.mediaList}

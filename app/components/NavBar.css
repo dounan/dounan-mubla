@@ -1,0 +1,29 @@
+.navbar {
+  background: white;
+  height: 100%;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.items {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0;
+}
+
+.navitem {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 25px;
+}
+
+.navitem:last-child {
+  margin-right: 0;
+}
+
+.logo {
+  height: 28px;
+}
+

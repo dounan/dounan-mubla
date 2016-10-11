@@ -20,10 +20,7 @@ export default function windowSize(resizeDebounceMs=0) {
 
       constructor(props) {
         super(props);
-        this.state = {
-          windowWidth: window.innerWidth,
-          windowHeight: window.innerHeight
-        }
+        this.state = this.getSize();
         this._debouncedUpdateSize = debounce(this.updateSize, resizeDebounceMs);
       }
 
@@ -46,10 +43,14 @@ export default function windowSize(resizeDebounceMs=0) {
       }
 
       updateSize = () => {
-        this.setState({
+        this.setState(this.getSize());
+      };
+
+      getSize = () => {
+        return {
           windowWidth: window.innerWidth,
           windowHeight: window.innerHeight
-        });
+        };
       };
     }
 

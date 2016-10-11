@@ -10,6 +10,7 @@ const webpack = require('webpack');
 
 const PATHS = {
   app: path.join(__dirname, 'app'),
+  assets: path.join(__dirname, 'app', 'assets'),
   build: path.join(__dirname, 'build')
 };
 
@@ -83,7 +84,8 @@ switch(process.env.npm_lifecycle_event) {
           name: 'vendor',
           entries: Object.keys(pkg.dependencies)
         }),
-        parts.loadFonts(PATHS.app),
+        parts.loadImages(PATHS.assets),
+        parts.loadFonts(PATHS.assets),
         parts.extractCSS(PATHS.app),
         // purifyCSS must come after extractCSS
         // NOTE: commented out because it removes classes with css-loader local scope
@@ -108,7 +110,8 @@ switch(process.env.npm_lifecycle_event) {
           port: process.env.PORT
         }),
         parts.setupCSS(PATHS.app),
-        parts.loadFonts(PATHS.app)
+        parts.loadImages(PATHS.assets),
+        parts.loadFonts(PATHS.assets)
     );
 }
 
