@@ -1,6 +1,7 @@
 import {Set} from 'immutable'
 import React, {Component, PropTypes} from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import BlockLoader from './BlockLoader'
 import Button from './Button'
 import MediaGrid from './MediaGrid'
 import * as pt from './propTypes'
@@ -11,7 +12,17 @@ const WRAPPER_STYLE = {
   paddingTop: jsvars.gutter,
   paddingLeft: jsvars.gutter,
   paddingRight: jsvars.gutter
-}
+};
+
+const LOADING_STYLE = {
+  marginTop: jsvars.headerHeight + 100,
+  marginLeft: 'auto',
+  marginRight: 'auto'
+};
+
+const SMALL_LOADING_STYLE = {
+  margin: '30px auto',
+};
 
 class Browse extends Component {
 
@@ -46,6 +57,11 @@ class Browse extends Component {
   }
 
   render() {
+    if (this.props.isLoadingPage) {
+      return (
+        <BlockLoader width={150} style={LOADING_STYLE} />
+      );
+    }
     return (
       <div style={WRAPPER_STYLE}>
         {this.renderInstaAuth()}
@@ -93,8 +109,13 @@ class Browse extends Component {
 
   renderLoadMore = () => {
     const {hasMoreMedia, isLoadingMore, onLoadMoreMedia} = this.props;
-    if (!hasMoreMedia || isLoadingMore) {
+    if (!hasMoreMedia) {
       return null;
+    }
+    if (isLoadingMore) {
+      return (
+        <BlockLoader width={50} style={SMALL_LOADING_STYLE} />
+      );
     }
     return (
       <Button onClick={onLoadMoreMedia}>
