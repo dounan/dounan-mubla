@@ -1,35 +1,14 @@
-import {Set} from 'immutable'
 import get from 'lodash/get'
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {compose} from "redux"
 import * as actions from '../actions'
-import * as api from '../api'
 import Browse from './Browse'
-import windowScroll from './windowScroll'
-import windowSize from './windowSize'
-
-const MEDIA_KEY = 'browse';
-const SPACING = 8;
-const MAX_ROW_H = 200;
-const WINDOW_SIZE_DEBOUNCE_MS = 300;
-const WINDOW_SCROLL_TILE_SIZE = 3 * MAX_ROW_H;
 
 class Container extends Component {
 
-  componentWillMount() {
-    this.loadMedia(this.props);
-  };
-
-  componentWillReceiveProps(nextProps) {
-    const p = this.props;
-    if (nextProps.instaToken !== p.instaToken) {
-      this.loadMedia(nextProps);
-    }
-  };
-
   componentWillUnmount() {
-    this.props.dispatch(actions.deselectAllMedia());
+    const {dispatch, mediaStoreKey} = this.props;
+    dispatch(actions.deselectAllMedia(mediaStoreKey));
   };
 
   render() {
@@ -37,63 +16,65 @@ class Container extends Component {
       <Browse {...this.props} />
     );
   };
-
-  loadMedia = (props) => {
-    const {dispatch, instaToken} = props;
-    if (instaToken) {
-      dispatch(actions.loadMedia(MEDIA_KEY, instaToken));
-    }
-  };
 }
 
 function toggleItemSelect(stateProps, dispatch, ownProps, mediaItem) {
   const {selectedMediaIds} = stateProps;
+  const {mediaStoreKey} = ownProps;
   const {id} = mediaItem;
   if (selectedMediaIds.has(id)) {
-    dispatch(actions.deselectMedia(MEDIA_KEY, [id]));
+    dispatch(actions.deselectMedia(mediaStoreKey, [id]));
   } else {
-    dispatch(actions.selectMedia(MEDIA_KEY, [id]));
+    dispatch(actions.selectMedia(mediaStoreKey, [id]));
   }
 };
 
 function mapStateToProps(state, ownProps) {
-  const {instagram, mediaStore} = state;
-  const media = get(mediaStore, MEDIA_KEY, {});
+  const {mediaStore} = state;
+  const {mediaStoreKey} = ownProps;
+  const media = get(mediaStore, mediaStoreKey, {});
+  const mediaList = get(media, 'mediaList', []);
   const pagination = get(media, 'pagination', {});
   return {
     _pagination: pagination,
-    instaToken: instagram.token,
-    isLoadingPage: media.isFetching,
+    isLoadingPage: media.isFetching && mediaList.length === 0,
     isLoadingMore: media.isFetchingMore,
-    mediaList: media.mediaList,
+    mediaList: mediaList,
     hasMoreMedia: pagination.hasMore,
     canSelect: true,
-    selectedMediaIds: media.selectedMediaIds,
-    maxRowHeight: MAX_ROW_H,
-    rowSpacing: SPACING,
-    colSpacing: SPACING,
-    // Set buffer to be larger than the scroll tile to give the new viewport
-    // calculation some time. Creates a smoother looking scrolling experience.
-    viewportBuffer: 2 * WINDOW_SCROLL_TILE_SIZE
+    selectedMediaIds: media.selectedMediaIds
   };
 }
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  const {_pagination, instaToken} = stateProps;
+  const {_pagination, ...otherStateProps} = stateProps;
   const {dispatch} = dispatchProps;
   return {
     ...ownProps,
-    ...stateProps,
+    ...otherStateProps,
     ...dispatchProps,
-    onInstaAuthClick: () => dispatch(actions.instaAuth()),
-    onLoadMoreMedia: () => dispatch(actions.moreMedia(MEDIA_KEY, instaToken, _pagination)),
+    onLoadMoreMedia: () => ownProps.onLoadMoreMedia(_pagination),
     onItemCheckClick: toggleItemSelect.bind(null, stateProps, dispatch, ownProps)
   };
 };
 
-export default compose(
-    windowSize(WINDOW_SIZE_DEBOUNCE_MS),
-    windowScroll(WINDOW_SCROLL_TILE_SIZE, WINDOW_SCROLL_TILE_SIZE),
-    connect(mapStateToProps, null, mergeProps)
-)(Container);
+const BrowseContainer = connect(mapStateToProps, null, mergeProps)(Container);
+
+BrowseContainer.propTypes = {
+  mediaStoreKey: PropTypes.string.isRequired,
+  // onLoadMoreMedia(pagination)
+  onLoadMoreMedia: PropTypes.func.isRequired,
+
+  maxRowHeight: PropTypes.number.isRequired,
+  rowSpacing: PropTypes.number,
+  colSpacing: PropTypes.number,
+
+  windowWidth: PropTypes.number.isRequired,
+  windowHeight: PropTypes.number.isRequired,
+  scrollX: PropTypes.number.isRequired,
+  scrollY: PropTypes.number.isRequired,
+  viewportBuffer: PropTypes.number.isRequired
+};
+
+export default BrowseContainer;
 

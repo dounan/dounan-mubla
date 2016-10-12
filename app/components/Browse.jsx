@@ -5,17 +5,8 @@ import BlockLoader from './BlockLoader'
 import Button from './Button'
 import MediaGrid from './MediaGrid'
 import * as pt from './propTypes'
-import jsvars from './vars'
-
-const WRAPPER_STYLE = {
-  marginTop: jsvars.headerHeight, 
-  paddingTop: jsvars.gutter,
-  paddingLeft: jsvars.gutter,
-  paddingRight: jsvars.gutter
-};
 
 const LOADING_STYLE = {
-  marginTop: jsvars.headerHeight + 100,
   marginLeft: 'auto',
   marginRight: 'auto'
 };
@@ -27,9 +18,6 @@ const SMALL_LOADING_STYLE = {
 class Browse extends Component {
 
   static propTypes = {
-    instaToken: PropTypes.string,
-    onInstaAuthClick: PropTypes.func.isRequired,
-
     isLoadingPage: PropTypes.bool,
     mediaList: PropTypes.arrayOf(pt.MEDIA),
     hasMoreMedia: PropTypes.bool,
@@ -41,14 +29,15 @@ class Browse extends Component {
     // onItemCheckClick(mediaItem)
     onItemCheckClick: PropTypes.func,
 
+    maxWidth: PropTypes.number.isRequired,
     maxRowHeight: PropTypes.number.isRequired,
     rowSpacing: PropTypes.number,
     colSpacing: PropTypes.number,
 
     windowWidth: PropTypes.number.isRequired,
     windowHeight: PropTypes.number.isRequired,
-    windowScrollX: PropTypes.number.isRequired,
-    windowScrollY: PropTypes.number.isRequired,
+    scrollX: PropTypes.number.isRequired,
+    scrollY: PropTypes.number.isRequired,
     viewportBuffer: PropTypes.number.isRequired
   };
 
@@ -57,52 +46,39 @@ class Browse extends Component {
   }
 
   render() {
-    const {instaToken, isLoadingPage} = this.props;
-    if (!instaToken) {
-      return this.renderInstaAuth();
-    }
+    const {isLoadingPage} = this.props;
     if (isLoadingPage) {
       return (
         <BlockLoader width={150} style={LOADING_STYLE} />
       );
     }
     return (
-      <div style={WRAPPER_STYLE}>
+      <div>
         {this.renderMediaList()}
         {this.renderLoadMore()}
       </div>
     );
   }
 
-  renderInstaAuth = () => {
-    const {onInstaAuthClick} = this.props;
-    return (
-      <Button onClick={onInstaAuthClick}>
-        Authorize Instagram
-      </Button>
-    );
-  };
-
   renderMediaList = () => {
     const p = this.props;
     if (!p.mediaList) {
       return null;
     }
-    const maxWidth = p.windowWidth - 2 * jsvars.gutter;
     return (
       <MediaGrid
           mediaList={p.mediaList}
           canSelect={p.canSelect}
           selectedMediaIds={p.selectedMediaIds}
           onItemCheckClick={p.onItemCheckClick}
-          maxWidth={maxWidth}
+          maxWidth={p.maxWidth}
           maxRowHeight={p.maxRowHeight}
           rowSpacing={p.rowSpacing}
           colSpacing={p.colSpacing}
           windowWidth={p.windowWidth}
           windowHeight={p.windowHeight}
-          scrollX={p.windowScrollX}
-          scrollY={p.windowScrollY}
+          scrollX={p.scrollX}
+          scrollY={p.scrollY}
           viewportBuffer={p.viewportBuffer} />
     );
   };

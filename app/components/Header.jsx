@@ -27,7 +27,7 @@ class Header extends Component {
 
   static propTypes = {
     routeLocation: pt.ROUTE_LOCATION,
-    browseSelectedBarVisible: PropTypes.bool
+    myMediaSelectedBarVisible: PropTypes.bool
   }
 
   render() {
@@ -35,8 +35,8 @@ class Header extends Component {
     return (
       <div style={WRAPPER_STYLE}>
         <NavBarContainer routeLocation={p.routeLocation} />
-        <Visible visible={p.browseSelectedBarVisible} style={COVER_STYLE}>
-          <BrowseSelectedBarContainer />
+        <Visible visible={p.myMediaSelectedBarVisible} style={COVER_STYLE}>
+          <BrowseSelectedBarContainer mediaStoreKey='myMedia' />
         </Visible>
       </div>
     );

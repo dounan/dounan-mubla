@@ -8,14 +8,14 @@ function mapStateToProps(state, ownProps) {
   const {routeLocation} = ownProps;
   const {pathname} = routeLocation;
   return {
-    isBrowseActive: pathname === '/',
+    isMyMediaActive: pathname === '/',
     isAlbumsActive: pathname === '/albums'
   };
 };
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    onBrowseClick: () => dispatch(actions.gotoBrowse()),
+    onMyMediaClick: () => dispatch(actions.gotoMyMedia()),
     onAlbumsClick: () => dispatch(actions.gotoAlbumList())
   };
 };

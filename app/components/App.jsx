@@ -9,8 +9,8 @@ import {syncHistoryWithStore} from 'react-router-redux'
 import * as actions from '../actions'
 import configureStore, {ROUTER_HISTORY} from '../store/configureStore'
 import AlbumListContainer from './AlbumListContainer'
-import BrowseContainer from './BrowseContainer'
 import InstaAccessTokenContainer from './InstaAccessTokenContainer'
+import MyMediaPageContainer from './MyMediaPageContainer'
 import Root from './Root'
 import TestComponent from './TestComponent'
 
@@ -48,7 +48,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Route path='/' component={AppContainer}>
-        <IndexRoute component={BrowseContainer} />
+        <IndexRoute component={MyMediaPageContainer} />
         <Route path='/albums' component={AlbumListContainer} />
       </Route>
       <Route path='access_token=:token' component={InstaAccessTokenContainer} />

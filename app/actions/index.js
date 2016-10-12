@@ -161,7 +161,7 @@ export const deselectAllMedia = (mediaStoreKey) => ({
 // Routing
 ////////////////////////////////////////////////////////////////////////////////
 
-export const gotoBrowse = () => push('/');
+export const gotoMyMedia = () => push('/');
 
 export const gotoAlbumList = () => push('/albums');
 

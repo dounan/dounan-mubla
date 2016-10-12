@@ -5,9 +5,9 @@ const addFa = (className) => fa.fa + " " + className;
 const iconMap = {
   add: addFa(fa['fa-plus']),
   album: addFa(fa['fa-book']),
-  browse: addFa(fa['fa-th']),
   checkCircle: addFa(fa['fa-check-circle']),
-  close: addFa(fa['fa-times'])
+  close: addFa(fa['fa-times']),
+  myMedia: addFa(fa['fa-th'])
 };
 
 export const getIcon = (name) => {

@@ -8,8 +8,8 @@ import jsvars from './vars'
 class NavBar extends Component {
 
   static propTypes = {
-    isBrowseActive: PropTypes.bool,
-    onBrowseClick: PropTypes.func.isRequired,
+    isMyMediaActive: PropTypes.bool,
+    onMyMediaClick: PropTypes.func.isRequired,
     isAlbumsActive: PropTypes.bool,
     onAlbumsClick: PropTypes.func.isRequired
   };
@@ -24,10 +24,10 @@ class NavBar extends Component {
           </li>
           <li className={css.navitem}>
             <NavLink
-                iconClass={getIcon('browse')}
-                label='Browse'
-                active={p.isBrowseActive}
-                onClick={p.onBrowseClick} />
+                iconClass={getIcon('myMedia')}
+                label='My Photos'
+                active={p.isMyMediaActive}
+                onClick={p.onMyMediaClick} />
           </li>
           <li className={css.navitem}>
             <NavLink

@@ -4,14 +4,11 @@ import {connect} from 'react-redux'
 import Header from './Header'
 import * as pt from './propTypes'
 
-const MEDIA_KEY = 'browse';
-
 function mapStateToProps(state, ownProps) {
   const {mediaStore} = state;
-  const media = mediaStore[MEDIA_KEY];
-  const numBrowseSelected = get(media, 'selectedMediaIds.size', 0);
+  const myMedia = mediaStore.myMedia;
   return {
-    browseSelectedBarVisible: numBrowseSelected > 0
+    myMediaSelectedBarVisible: get(myMedia, 'selectedMediaIds.size', 0) > 0
   };
 };
 
