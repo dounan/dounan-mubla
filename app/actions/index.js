@@ -35,41 +35,47 @@ export const restoreInstaAccessToken = () => (dispatch, getState) => {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const REQUEST_MEDIA = 'REQUEST_MEDIA';
-const requestMedia = () => ({
-  type: REQUEST_MEDIA
+const requestMedia = (mediaStoreKey) => ({
+  type: REQUEST_MEDIA,
+  mediaStoreKey
 });
 
 export const RECEIVE_MEDIA = 'RECEIVE_MEDIA';
-const receiveMedia = (mediaList, pagination) => ({
+const receiveMedia = (mediaStoreKey, mediaList, pagination) => ({
   type: RECEIVE_MEDIA,
+  mediaStoreKey,
   mediaList,
   pagination
 });
 
 export const REQUEST_MEDIA_ERROR = 'REQUEST_MEDIA_ERROR';
-const requestMediaError = () => ({
-  type: REQUEST_MEDIA_ERROR
+const requestMediaError = (mediaStoreKey) => ({
+  type: REQUEST_MEDIA_ERROR,
+  mediaStoreKey
 });
 
 export const REQUEST_MORE_MEDIA = 'REQUEST_MORE_MEDIA';
-const requestMoreMedia = () => ({
-  type: REQUEST_MORE_MEDIA
+const requestMoreMedia = (mediaStoreKey) => ({
+  type: REQUEST_MORE_MEDIA,
+  mediaStoreKey
 });
 
 export const RECEIVE_MORE_MEDIA = 'RECEIVE_MORE_MEDIA';
-const receiveMoreMedia = (mediaList, pagination) => ({
+const receiveMoreMedia = (mediaStoreKey, mediaList, pagination) => ({
   type: RECEIVE_MORE_MEDIA,
   mediaList,
-  pagination
+  pagination,
+  mediaStoreKey
 });
 
 export const REQUEST_MORE_MEDIA_ERROR = 'REQUEST_MORE_MEDIA_ERROR';
-const requestMoreMediaError = () => ({
-  type: REQUEST_MORE_MEDIA_ERROR
+const requestMoreMediaError = (mediaStoreKey) => ({
+  type: REQUEST_MORE_MEDIA_ERROR,
+  mediaStoreKey
 });
 
-export const loadMedia = (instaAccessToken) => (dispatch, getState) => {
-  dispatch(requestMedia());
+export const loadMedia = (mediaStoreKey, instaAccessToken) => (dispatch, getState) => {
+  dispatch(requestMedia(mediaStoreKey));
   const params = {
     q: {
       'access_token': instaAccessToken,
@@ -77,10 +83,10 @@ export const loadMedia = (instaAccessToken) => (dispatch, getState) => {
     }
   };
   dispatch(api.instaRecentMedia(params))
-      .then(handleLoadMediaSuccess.bind(null, dispatch));
+      .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
-function handleLoadMediaSuccess(dispatch, result) {
+function handleLoadMediaSuccess(dispatch, mediaStoreKey, result) {
   const instaBody = result.body;
   if (insta.isSuccess(instaBody)) {
     const mediaList = insta.extractMediaList(instaBody);
@@ -88,15 +94,15 @@ function handleLoadMediaSuccess(dispatch, result) {
       hasMore: insta.hasMore(instaBody),
       instagram: insta.extractPagination(instaBody)
     };
-    dispatch(receiveMedia(mediaList, pagination));
+    dispatch(receiveMedia(mediaStoreKey, mediaList, pagination));
   } else {
-    dispatch(requestMediaError());
+    dispatch(requestMediaError(mediaStoreKey));
     handleInstaError(dispatch, instaBody);
   }
 };
 
-export const moreMedia = (instaAccessToken, pagination) => (dispatch, getState) => {
-  dispatch(requestMoreMedia());
+export const moreMedia = (mediaStoreKey, instaAccessToken, pagination) => (dispatch, getState) => {
+  dispatch(requestMoreMedia(mediaStoreKey));
   const params = {
     q: {
       'access_token': instaAccessToken,
@@ -105,10 +111,10 @@ export const moreMedia = (instaAccessToken, pagination) => (dispatch, getState) 
     }
   };
   dispatch(api.instaRecentMedia(params))
-      .then(handleMoreMediaSuccess.bind(null, dispatch));
+      .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
-function handleMoreMediaSuccess(dispatch, result) {
+function handleMoreMediaSuccess(dispatch, mediaStoreKey, result) {
   const instaBody = result.body;
   if (insta.isSuccess(instaBody)) {
     const mediaList = insta.extractMediaList(instaBody);
@@ -116,9 +122,9 @@ function handleMoreMediaSuccess(dispatch, result) {
       hasMore: insta.hasMore(instaBody),
       instagram: insta.extractPagination(instaBody)
     };
-    dispatch(receiveMoreMedia(mediaList, pagination));
+    dispatch(receiveMoreMedia(mediaStoreKey, mediaList, pagination));
   } else {
-    dispatch(requestMoreMediaError());
+    dispatch(requestMoreMediaError(mediaStoreKey));
     handleInstaError(dispatch, instaBody);
   }
 };
@@ -131,25 +137,24 @@ function handleInstaError(dispatch, instaBody) {
   }
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// Browse page
-////////////////////////////////////////////////////////////////////////////////
-
-export const BROWSE_SELECT_MEDIA = 'BROWSE_SELECT_MEDIA';
-export const browseSelectMedia = (mediaIds) => ({
-  type: BROWSE_SELECT_MEDIA,
+export const SELECT_MEDIA = 'SELECT_MEDIA';
+export const selectMedia = (mediaStoreKey, mediaIds) => ({
+  type: SELECT_MEDIA,
+  mediaStoreKey, 
   mediaIds
 });
 
-export const BROWSE_DESELECT_MEDIA = 'BROWSE_DESELECT_MEDIA';
-export const browseDeselectMedia = (mediaIds) => ({
-  type: BROWSE_DESELECT_MEDIA,
+export const DESELECT_MEDIA = 'DESELECT_MEDIA';
+export const deselectMedia = (mediaStoreKey, mediaIds) => ({
+  type: DESELECT_MEDIA,
+  mediaStoreKey, 
   mediaIds
 });
 
-export const BROWSE_DESELECT_ALL_MEDIA = 'BROWSE_DESELECT_ALL_MEDIA';
-export const browseDeselectAllMedia = () => ({
-  type: BROWSE_DESELECT_ALL_MEDIA,
+export const DESELECT_ALL_MEDIA = 'DESELECT_ALL_MEDIA';
+export const deselectAllMedia = (mediaStoreKey) => ({
+  type: DESELECT_ALL_MEDIA,
+  mediaStoreKey
 });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,14 +178,16 @@ export const notify = (level, message) => (dispatch, getState) => {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const EXTEND_MEDIA_LIST = 'EXTEND_MEDIA_LIST';
-export const extendMediaList = (numItems) => ({
+export const extendMediaList = (mediaStoreKey, numItems) => ({
   type: EXTEND_MEDIA_LIST,
+  mediaStoreKey,
   numItems
 });
 
 export const RANDOMIZE_MEDIA_ASPECT_RATIOS = 'RANDOMIZE_MEDIA_ASPECT_RATIOS';
-export const randomizeMediaAspectRatios = (min, max) => ({
+export const randomizeMediaAspectRatios = (mediaStoreKey, min, max) => ({
   type: RANDOMIZE_MEDIA_ASPECT_RATIOS,
+  mediaStoreKey,
   min,
   max
 });

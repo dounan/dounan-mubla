@@ -4,10 +4,13 @@ import {connect} from 'react-redux'
 import * as actions from '../actions'
 import BrowseSelectedBar from './BrowseSelectedBar'
 
+const MEDIA_KEY = 'browse';
+
 function mapStateToProps(state, ownProps) {
-  const {browse} = state;
+  const {mediaStore} = state;
+  const media = mediaStore[MEDIA_KEY];
   return {
-    numSelected: get(browse, 'selectedMediaIds.size', 0)
+    numSelected: get(media, 'selectedMediaIds.size', 0)
   };
 };
 
@@ -17,7 +20,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     ...ownProps,
     ...stateProps,
     ...dispatchProps,
-    onCloseClick: () => dispatch(actions.browseDeselectAllMedia()),
+    onCloseClick: () => dispatch(actions.deselectAllMedia(MEDIA_KEY)),
     // TODO: handle add to album
     onAddClick: () => {}
   };

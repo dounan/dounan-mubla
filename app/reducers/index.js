@@ -4,31 +4,6 @@ import {routerReducer} from 'react-router-redux'
 import uuid from 'node-uuid'
 import * as actions from '../actions'
 
-const INIT_BROWSE = {
-  selectedMediaIds: Set()
-};
-
-function browse(state=INIT_BROWSE, action) {
-  switch(action.type) {
-    case actions.BROWSE_SELECT_MEDIA:
-      return {
-        ...state,
-        selectedMediaIds: state.selectedMediaIds.union(action.mediaIds)
-      }
-    case actions.BROWSE_DESELECT_MEDIA:
-      return {
-        ...state,
-        selectedMediaIds: state.selectedMediaIds.subtract(action.mediaIds)
-      }
-    case actions.BROWSE_DESELECT_ALL_MEDIA:
-      return {
-        ...state,
-        selectedMediaIds: Set()
-      }
-  }
-  return state;
-};
-
 function instagram(state={}, action) {
   switch (action.type) {
     case actions.SET_INSTA_ACCESS_TOKEN:
@@ -40,7 +15,13 @@ function instagram(state={}, action) {
   return state;
 };
 
-function media(state={}, action) {
+const INIT_MEDIA = {
+  mediaList: [],
+  pagination: {},
+  selectedMediaIds: Set()
+};
+
+function mediaHelper(state=INIT_MEDIA, action) {
   switch (action.type) {
     case actions.REQUEST_MEDIA:
       return {
@@ -76,6 +57,21 @@ function media(state={}, action) {
         ...state,
         isFetchingMore: false
       };
+    case actions.SELECT_MEDIA:
+      return {
+        ...state,
+        selectedMediaIds: state.selectedMediaIds.union(action.mediaIds)
+      }
+    case actions.DESELECT_MEDIA:
+      return {
+        ...state,
+        selectedMediaIds: state.selectedMediaIds.subtract(action.mediaIds)
+      }
+    case actions.DESELECT_ALL_MEDIA:
+      return {
+        ...state,
+        selectedMediaIds: Set()
+      }
     case actions.EXTEND_MEDIA_LIST:
       return {
         ...state,
@@ -87,6 +83,16 @@ function media(state={}, action) {
         ...state,
         mediaList: randomizeMediaListAspectRatios(min, max, state.mediaList)
       };
+  }
+  return state;
+};
+
+function mediaStore(state={}, action) {
+  if (action.mediaStoreKey) {
+    return {
+      ...state,
+      [action.mediaStoreKey]: mediaHelper(state[action.mediaStoreKey], action)
+    }
   }
   return state;
 };
@@ -143,9 +149,8 @@ function randomizeAspectRatio(min, max, media) {
 };
 
 export default combineReducers({
-  browse: browse,
-  instagram: instagram,
-  media: media,
-  routing: routerReducer,
+  instagram,
+  mediaStore,
+  routing: routerReducer
 });
 

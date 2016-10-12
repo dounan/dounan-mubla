@@ -9,6 +9,7 @@ import Browse from './Browse'
 import windowScroll from './windowScroll'
 import windowSize from './windowSize'
 
+const MEDIA_KEY = 'browse';
 const SPACING = 8;
 const MAX_ROW_H = 200;
 const WINDOW_SIZE_DEBOUNCE_MS = 300;
@@ -27,6 +28,10 @@ class Container extends Component {
     }
   };
 
+  componentWillUnmount() {
+    this.props.dispatch(actions.deselectAllMedia());
+  };
+
   render() {
     return (
       <Browse {...this.props} />
@@ -36,23 +41,24 @@ class Container extends Component {
   loadMedia = (props) => {
     const {dispatch, instaToken} = props;
     if (instaToken) {
-      dispatch(actions.loadMedia(instaToken));
+      dispatch(actions.loadMedia(MEDIA_KEY, instaToken));
     }
   };
 }
 
-function toggleItemSelect(stateProps, dispatch, ownProps, media) {
+function toggleItemSelect(stateProps, dispatch, ownProps, mediaItem) {
   const {selectedMediaIds} = stateProps;
-  const {id} = media;
+  const {id} = mediaItem;
   if (selectedMediaIds.has(id)) {
-    dispatch(actions.browseDeselectMedia([id]));
+    dispatch(actions.deselectMedia(MEDIA_KEY, [id]));
   } else {
-    dispatch(actions.browseSelectMedia([id]));
+    dispatch(actions.selectMedia(MEDIA_KEY, [id]));
   }
 };
 
 function mapStateToProps(state, ownProps) {
-  const {instagram, media, browse} = state;
+  const {instagram, mediaStore} = state;
+  const media = get(mediaStore, MEDIA_KEY, {});
   const pagination = get(media, 'pagination', {});
   return {
     _pagination: pagination,
@@ -62,7 +68,7 @@ function mapStateToProps(state, ownProps) {
     mediaList: media.mediaList,
     hasMoreMedia: pagination.hasMore,
     canSelect: true,
-    selectedMediaIds: browse.selectedMediaIds,
+    selectedMediaIds: media.selectedMediaIds,
     maxRowHeight: MAX_ROW_H,
     rowSpacing: SPACING,
     colSpacing: SPACING,
@@ -80,7 +86,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     ...stateProps,
     ...dispatchProps,
     onInstaAuthClick: () => dispatch(actions.instaAuth()),
-    onLoadMoreMedia: () => dispatch(actions.moreMedia(instaToken, _pagination)),
+    onLoadMoreMedia: () => dispatch(actions.moreMedia(MEDIA_KEY, instaToken, _pagination)),
     onItemCheckClick: toggleItemSelect.bind(null, stateProps, dispatch, ownProps)
   };
 };
