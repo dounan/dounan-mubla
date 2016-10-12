@@ -24,19 +24,21 @@ export function toMedia(o) {
     media.videos = [o.videos.low_resolution, o.videos.standard_resolution];
   }
   return media;
-}
+};
 
 export function extractMediaList(body) {
   return get(body, 'data', []).map(toMedia);
-}
+};
 
 export function extractPagination(body) {
-  return {
-    maxId: get(body, 'pagination.next_max_id')
-  };
-}
+  return get(body, 'pagination');
+};
+
+export function hasMore(body) {
+  return !!get(body, 'pagination.next_max_id');
+};
 
 export function isSuccess(body) {
   return body.meta.code === 200;
-}
+};
 

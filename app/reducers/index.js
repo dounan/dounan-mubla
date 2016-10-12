@@ -52,7 +52,7 @@ function media(state={}, action) {
         ...state,
         isFetching: false,
         mediaList: action.mediaList,
-        instaPagination: action.instaPagination
+        pagination: action.pagination
       };
     case actions.REQUEST_MEDIA_ERROR:
       return {
@@ -69,7 +69,7 @@ function media(state={}, action) {
         ...state,
         isFetchingMore: false,
         mediaList: state.mediaList.concat(action.mediaList),
-        instaPagination: action.instaPagination
+        pagination: action.pagination
       };
     case actions.REQUEST_MORE_MEDIA_ERROR:
       return {

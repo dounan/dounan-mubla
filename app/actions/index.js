@@ -40,10 +40,10 @@ const requestMedia = () => ({
 });
 
 export const RECEIVE_MEDIA = 'RECEIVE_MEDIA';
-const receiveMedia = (mediaList, instaPagination) => ({
+const receiveMedia = (mediaList, pagination) => ({
   type: RECEIVE_MEDIA,
   mediaList,
-  instaPagination
+  pagination
 });
 
 export const REQUEST_MEDIA_ERROR = 'REQUEST_MEDIA_ERROR';
@@ -57,10 +57,10 @@ const requestMoreMedia = () => ({
 });
 
 export const RECEIVE_MORE_MEDIA = 'RECEIVE_MORE_MEDIA';
-const receiveMoreMedia = (mediaList, instaPagination) => ({
+const receiveMoreMedia = (mediaList, pagination) => ({
   type: RECEIVE_MORE_MEDIA,
   mediaList,
-  instaPagination
+  pagination
 });
 
 export const REQUEST_MORE_MEDIA_ERROR = 'REQUEST_MORE_MEDIA_ERROR';
@@ -76,7 +76,7 @@ export const loadMedia = (instaAccessToken) => (dispatch, getState) => {
       'count': 10
     }
   };
-  return dispatch(api.instaRecentMedia(params))
+  dispatch(api.instaRecentMedia(params))
       .then(handleLoadMediaSuccess.bind(null, dispatch));
 };
 
@@ -84,24 +84,27 @@ function handleLoadMediaSuccess(dispatch, result) {
   const instaBody = result.body;
   if (insta.isSuccess(instaBody)) {
     const mediaList = insta.extractMediaList(instaBody);
-    const instaPagination = insta.extractPagination(instaBody);
-    dispatch(receiveMedia(mediaList, instaPagination));
+    const pagination = {
+      hasMore: insta.hasMore(instaBody),
+      instagram: insta.extractPagination(instaBody)
+    };
+    dispatch(receiveMedia(mediaList, pagination));
   } else {
     dispatch(requestMediaError());
     handleInstaError(dispatch, instaBody);
   }
 };
 
-export const moreMedia = (instaAccessToken, instaMaxId) => (dispatch, getState) => {
+export const moreMedia = (instaAccessToken, pagination) => (dispatch, getState) => {
   dispatch(requestMoreMedia());
   const params = {
     q: {
       'access_token': instaAccessToken,
-      'max_id': instaMaxId,
+      'max_id': get(pagination, 'instagram.next_max_id'),
       'count': 10
     }
   };
-  return dispatch(api.instaRecentMedia(params))
+  dispatch(api.instaRecentMedia(params))
       .then(handleMoreMediaSuccess.bind(null, dispatch));
 };
 
@@ -109,8 +112,11 @@ function handleMoreMediaSuccess(dispatch, result) {
   const instaBody = result.body;
   if (insta.isSuccess(instaBody)) {
     const mediaList = insta.extractMediaList(instaBody);
-    const instaPagination = insta.extractPagination(instaBody);
-    dispatch(receiveMoreMedia(mediaList, instaPagination));
+    const pagination = {
+      hasMore: insta.hasMore(instaBody),
+      instagram: insta.extractPagination(instaBody)
+    };
+    dispatch(receiveMoreMedia(mediaList, pagination));
   } else {
     dispatch(requestMoreMediaError());
     handleInstaError(dispatch, instaBody);

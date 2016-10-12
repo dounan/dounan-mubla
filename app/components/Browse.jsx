@@ -57,14 +57,17 @@ class Browse extends Component {
   }
 
   render() {
-    if (this.props.isLoadingPage) {
+    const {instaToken, isLoadingPage} = this.props;
+    if (!instaToken) {
+      return this.renderInstaAuth();
+    }
+    if (isLoadingPage) {
       return (
         <BlockLoader width={150} style={LOADING_STYLE} />
       );
     }
     return (
       <div style={WRAPPER_STYLE}>
-        {this.renderInstaAuth()}
         {this.renderMediaList()}
         {this.renderLoadMore()}
       </div>
@@ -72,10 +75,7 @@ class Browse extends Component {
   }
 
   renderInstaAuth = () => {
-    const {instaToken, onInstaAuthClick} = this.props;
-    if (instaToken) {
-      return null;
-    }
+    const {onInstaAuthClick} = this.props;
     return (
       <Button onClick={onInstaAuthClick}>
         Authorize Instagram

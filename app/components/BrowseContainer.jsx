@@ -53,14 +53,14 @@ function toggleItemSelect(stateProps, dispatch, ownProps, media) {
 
 function mapStateToProps(state, ownProps) {
   const {instagram, media, browse} = state;
-  const instaMaxId = get(media, 'instaPagination.maxId');
+  const pagination = get(media, 'pagination', {});
   return {
+    _pagination: pagination,
     instaToken: instagram.token,
     isLoadingPage: media.isFetching,
     isLoadingMore: media.isFetchingMore,
     mediaList: media.mediaList,
-    hasMoreMedia: !!instaMaxId,
-    instaMaxId: instaMaxId,
+    hasMoreMedia: pagination.hasMore,
     canSelect: true,
     selectedMediaIds: browse.selectedMediaIds,
     maxRowHeight: MAX_ROW_H,
@@ -73,14 +73,14 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  const {instaToken, instaMaxId} = stateProps;
+  const {_pagination, instaToken} = stateProps;
   const {dispatch} = dispatchProps;
   return {
     ...ownProps,
     ...stateProps,
     ...dispatchProps,
     onInstaAuthClick: () => dispatch(actions.instaAuth()),
-    onLoadMoreMedia: () => dispatch(actions.moreMedia(instaToken, instaMaxId)),
+    onLoadMoreMedia: () => dispatch(actions.moreMedia(instaToken, _pagination)),
     onItemCheckClick: toggleItemSelect.bind(null, stateProps, dispatch, ownProps)
   };
 };
