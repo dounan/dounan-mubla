@@ -4,8 +4,6 @@
  */
 module.exports = {
   blue: '#3377d7',
-  fontRegular: "'Open Sans 300', sans-serif",
-  fontBold: "'Open Sans 600', sans-serif",
   gutter: 40,
   headerHeight: 50
 }

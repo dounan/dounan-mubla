@@ -43,7 +43,7 @@ const common = {
       appMountId: 'app',
       favicon: path.join(PATHS.app, 'assets', 'favicon.ico'),
       inject: false,
-      links: ['https://fonts.googleapis.com/css?family=Open+Sans:300,600'],
+      links: ['https://fonts.googleapis.com/css?family=Open+Sans:300,400'],
       mobile: true,
       template: require('html-webpack-template'),
       title: 'Mubla'
