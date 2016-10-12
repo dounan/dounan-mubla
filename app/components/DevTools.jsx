@@ -3,7 +3,7 @@ import React from "react"
 import {createDevTools} from "redux-devtools"
 import Dispatcher from 'redux-devtools-dispatch'
 import DockMonitor from "redux-devtools-dock-monitor"
-import Inspector from 'redux-devtools-inspector';
+import LogMonitor from 'redux-devtools-log-monitor'
 import MultipleMonitors from 'redux-devtools-multiple-monitors'
 import * as actions from '../actions'
 
@@ -18,7 +18,7 @@ export default createDevTools(
       changeMonitorKey="ctrl-m"
       defaultIsVisible={false}>
     <MultipleMonitors>
-      <Inspector theme={THEME} />
+      <LogMonitor />
       <Dispatcher actionCreators={actionCreators} />
     </MultipleMonitors>
   </DockMonitor>
