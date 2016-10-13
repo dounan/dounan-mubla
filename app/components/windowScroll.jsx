@@ -39,7 +39,7 @@ export default function windowScroll(gridW=1, gridH=1) {
       }
 
       componentWillUnmount() {
-        window.removeEventListener('resize', this.updateScroll);
+        window.removeEventListener('scroll', this.updateScroll);
       }
 
       render() {
