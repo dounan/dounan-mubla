@@ -7,8 +7,7 @@ import Browse from './Browse'
 class Container extends Component {
 
   componentWillUnmount() {
-    const {dispatch, mediaStoreKey} = this.props;
-    dispatch(actions.deselectAllMedia(mediaStoreKey));
+    this.props.onDeselectAll();
   };
 
   render() {
@@ -18,17 +17,6 @@ class Container extends Component {
   };
 }
 
-function toggleItemSelect(stateProps, dispatch, ownProps, mediaItem) {
-  const {selectedMediaIds} = stateProps;
-  const {mediaStoreKey} = ownProps;
-  const {id} = mediaItem;
-  if (selectedMediaIds.has(id)) {
-    dispatch(actions.deselectMedia(mediaStoreKey, [id]));
-  } else {
-    dispatch(actions.selectMedia(mediaStoreKey, [id]));
-  }
-};
-
 function mapStateToProps(state, ownProps) {
   const {mediaStore} = state;
   const {mediaStoreKey} = ownProps;
@@ -36,7 +24,6 @@ function mapStateToProps(state, ownProps) {
   const mediaList = get(media, 'mediaList', []);
   const pagination = get(media, 'pagination', {});
   return {
-    _pagination: pagination,
     isLoadingPage: media.isFetching && mediaList.length === 0,
     isLoadingMore: media.isFetchingMore,
     mediaList: mediaList,
@@ -46,19 +33,15 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  const {_pagination, ...otherStateProps} = stateProps;
-  const {dispatch} = dispatchProps;
+function mapDispatchToProps(dispatch, ownProps) {
+  const {mediaStoreKey} = ownProps;
   return {
-    ...ownProps,
-    ...otherStateProps,
-    ...dispatchProps,
-    onLoadMoreMedia: () => ownProps.onLoadMoreMedia(_pagination),
-    onItemCheckClick: toggleItemSelect.bind(null, stateProps, dispatch, ownProps)
+    onItemCheckClick: ({id}) => dispatch(actions.toggleSelectMedia(mediaStoreKey, id)),
+    onDeselectAll: () => dispatch(actions.deselectAllMedia(mediaStoreKey))
   };
 };
 
-const BrowseContainer = connect(mapStateToProps, null, mergeProps)(Container);
+const BrowseContainer = connect(mapStateToProps, mapDispatchToProps)(Container);
 
 BrowseContainer.propTypes = {
   mediaStoreKey: PropTypes.string.isRequired,

@@ -15,29 +15,12 @@ const MAX_ROW_H = 200;
 const WINDOW_SIZE_DEBOUNCE_MS = 300;
 const WINDOW_SCROLL_TILE_SIZE = 3 * MAX_ROW_H;
 
-function showSearching(dispatch) {
-  dispatch(actions.requestMedia(MEDIA_STORE_KEY));
-}
-
-function doSearch(dispatch, instaToken, searchQuery) {
-  dispatch(actions.clearMedia(MEDIA_STORE_KEY));
-  if (searchQuery) {
-    dispatch(actions.searchMedia(MEDIA_STORE_KEY, instaToken, searchQuery));
-  }
-};
-
-const debouncedDoSearch = debounce(doSearch, 400);
-
 class Container extends Component {
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps, prevState) {
     const p = this.props;
-    const {dispatch, instaToken, searchQuery} = nextProps;
-    if (searchQuery !== p.searchQuery) {
-      // This prevents a weird state where the 'No results' view appears while
-      // we are waiting for the debounced doSearch to run.
-      showSearching(dispatch);
-      debouncedDoSearch(dispatch, instaToken, searchQuery);
+    if (prevProps.searchQuery !== p.searchQuery) {
+      p.onSearch();
     }
   };
 
@@ -48,11 +31,24 @@ class Container extends Component {
   };
 }
 
+const getSearchQuery = (ownProps) => get(ownProps, 'location.query.q', '');
+
+function showSearching(dispatch) {
+  dispatch(actions.requestMedia(MEDIA_STORE_KEY));
+}
+
+function doSearch(dispatch, searchQuery) {
+  dispatch(actions.clearMedia(MEDIA_STORE_KEY));
+  if (searchQuery) {
+    dispatch(actions.searchMedia(MEDIA_STORE_KEY, searchQuery));
+  }
+};
+const debouncedDoSearch = debounce(doSearch, 400);
+
 function mapStateToProps(state, ownProps) {
   return {
     mediaStoreKey: MEDIA_STORE_KEY,
-    instaToken: get(state, 'instagram.token'),
-    searchQuery: get(ownProps, 'location.query.q', ''),
+    searchQuery: getSearchQuery(ownProps),
     maxRowHeight: MAX_ROW_H,
     rowSpacing: SPACING,
     colSpacing: SPACING,
@@ -64,25 +60,24 @@ function mapStateToProps(state, ownProps) {
   };
 };
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  const {instaToken} = stateProps;
-  const {dispatch} = dispatchProps;
+function mapDispatchToProps(dispatch, ownProps) {
   return {
-    ...ownProps,
-    ...stateProps,
-    ...dispatchProps,
-    onInstagramToken: () => {
-      if (instaToken) doSearch(dispatch, instaToken, stateProps.searchQuery);
+    onInstagramToken: (token) => {
+      if (token) doSearch(dispatch, getSearchQuery(ownProps));
     },
-    onLoadMoreMedia: (pagination) => {
-      dispatch(actions.moreSearchMedia(MEDIA_STORE_KEY, instaToken, pagination))
-    }
+    onSearch: () => {
+      // This prevents a weird state where the 'No results' view appears while
+      // we are waiting for the debounced doSearch to run.
+      showSearching(dispatch);
+      debouncedDoSearch(dispatch, getSearchQuery(ownProps));
+    },
+    onLoadMoreMedia: () => dispatch(actions.moreSearchMedia(MEDIA_STORE_KEY))
   };
 };
 
 export default compose(
     windowSize(WINDOW_SIZE_DEBOUNCE_MS),
     windowScroll(WINDOW_SCROLL_TILE_SIZE, WINDOW_SCROLL_TILE_SIZE),
-    connect(mapStateToProps, null, mergeProps)
+    connect(mapStateToProps, mapDispatchToProps)
 )(Container);
 

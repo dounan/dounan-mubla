@@ -22,7 +22,6 @@ class SearchPage extends Component {
     searchQuery: PropTypes.string.isRequired,
     mediaStoreKey: PropTypes.string.isRequired,
 
-    instaToken: PropTypes.string,
     onInstagramToken: PropTypes.func,
 
     // onLoadMoreMedia(pagination)
@@ -40,10 +39,9 @@ class SearchPage extends Component {
   };
 
   render() {
-    const {instaToken, onInstagramToken, searchQuery} = this.props;
+    const {onInstagramToken, searchQuery} = this.props;
     return (
       <InstagramAuthWallContainer
-          instaToken={instaToken}
           onInstagramToken={onInstagramToken}
           style={WRAPPER_STYLE}>
         {searchQuery ? this.renderBrowse() : this.renderInstr()}
@@ -60,7 +58,7 @@ class SearchPage extends Component {
   };
 
   renderBrowse = () => {
-    const {instaToken, onInstagramToken, searchQuery, ...other} = this.props;
+    const {onInstagramToken, searchQuery, ...other} = this.props;
     const maxWidth = other.windowWidth - 2 * jsvars.gutter;
     return (
       <BrowseContainer

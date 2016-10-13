@@ -28,25 +28,18 @@ function mapStateToProps(state, ownProps) {
   };
 };
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  const {instaToken} = stateProps;
-  const {dispatch} = dispatchProps;
+function mapDispatchToProps(dispatch, ownProps) {
   return {
-    ...ownProps,
-    ...stateProps,
-    ...dispatchProps,
-    onInstagramToken: () => {
-      if (instaToken) dispatch(actions.recentMedia(MEDIA_STORE_KEY, instaToken))
+    onInstagramToken: (token) => {
+      if (token) dispatch(actions.recentMedia(MEDIA_STORE_KEY));
     },
-    onLoadMoreMedia: (pagination) => {
-      dispatch(actions.moreRecentMedia(MEDIA_STORE_KEY, instaToken, pagination))
-    }
+    onLoadMoreMedia: () => dispatch(actions.moreRecentMedia(MEDIA_STORE_KEY))
   };
 };
 
 export default compose(
     windowSize(WINDOW_SIZE_DEBOUNCE_MS),
     windowScroll(WINDOW_SCROLL_TILE_SIZE, WINDOW_SCROLL_TILE_SIZE),
-    connect(mapStateToProps, null, mergeProps)
+    connect(mapStateToProps, mapDispatchToProps)
 )(MyMediaPage);
 

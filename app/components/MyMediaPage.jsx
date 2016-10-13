@@ -15,7 +15,6 @@ class MyMediaPage extends Component {
   static propTypes = {
     mediaStoreKey: PropTypes.string.isRequired,
 
-    instaToken: PropTypes.string,
     onInstagramToken: PropTypes.func,
 
     // onLoadMoreMedia(pagination)
@@ -33,11 +32,10 @@ class MyMediaPage extends Component {
   };
 
   render() {
-    const {instaToken, onInstagramToken, ...other} = this.props;
+    const {onInstagramToken, ...other} = this.props;
     const maxWidth = other.windowWidth - 2 * jsvars.gutter;
     return (
       <InstagramAuthWallContainer
-          instaToken={instaToken}
           onInstagramToken={onInstagramToken}
           style={WRAPPER_STYLE}>
         <BrowseContainer {...other} maxWidth={maxWidth} />

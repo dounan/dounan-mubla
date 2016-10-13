@@ -74,11 +74,17 @@ const requestMoreMediaError = (mediaStoreKey) => ({
   mediaStoreKey
 });
 
-export const recentMedia = (mediaStoreKey, instaToken) => (dispatch) => {
+export const recentMedia = (mediaStoreKey) => (dispatch, getState) => {
+  const state = getState();
+  const instaToken = state.instagram.token;
+  if (!instaToken) {
+    // TODO: warn
+    return;
+  }
   dispatch(requestMedia(mediaStoreKey));
   const params = {
     q: {
-      'access_token': instaToken,
+      'access_token': state.instagram.token,
       'count': 10
     }
   };
@@ -87,12 +93,20 @@ export const recentMedia = (mediaStoreKey, instaToken) => (dispatch) => {
       .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
-export const moreRecentMedia = (mediaStoreKey, instaToken, pagination) => (dispatch) => {
+export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
+  const state = getState();
+  const instaToken = state.instagram.token;
+  const media = state.mediaStore[mediaStoreKey];
+  const maxId = get(media, 'pagination.instagram.next_max_id');
+  if (!instaToken || !maxId) {
+    // TODO: warn
+    return;
+  }
   dispatch(requestMoreMedia(mediaStoreKey));
   const params = {
     q: {
       'access_token': instaToken,
-      'max_id': get(pagination, 'instagram.next_max_id'),
+      'max_id': maxId,
       'count': 10
     }
   };
@@ -101,7 +115,13 @@ export const moreRecentMedia = (mediaStoreKey, instaToken, pagination) => (dispa
       .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
-export const searchMedia = (mediaStoreKey, instaToken, query) => (dispatch) => {
+export const searchMedia = (mediaStoreKey, query) => (dispatch, getState) => {
+  const state = getState();
+  const instaToken = state.instagram.token;
+  if (!instaToken) {
+    // TODO: warn
+    return;
+  }
   dispatch(requestMedia(mediaStoreKey));
   const params = {
     q: {
@@ -115,16 +135,24 @@ export const searchMedia = (mediaStoreKey, instaToken, query) => (dispatch) => {
       .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
-export const moreSearchMedia = (mediaStoreKey, instaToken, pagination) => (dispatch) => {
+export const moreSearchMedia = (mediaStoreKey) => (dispatch, getState) => {
+  const state = getState();
+  const instaToken = state.instagram.token;
+  const media = state.mediaStore[mediaStoreKey];
+  const maxTagId = get(media, 'pagination.instagram.next_max_tag_id');
+  const tagName = get(media, 'pagination.instagram.tagName');
+  if (!instaToken || !maxTagId) {
+    // TODO: warn
+    return;
+  }
   dispatch(requestMoreMedia(mediaStoreKey));
-  const instaPag = pagination.instagram;
   const queryParams = {
     'access_token': instaToken,
-    'max_tag_id': instaPag['next_max_tag_id'],
+    'max_tag_id': maxTagId,
     'count': 5
   };
   // TODO: handle rejected Promise
-  instaRecentTagMedia(dispatch, instaPag.tagName, queryParams)
+  instaRecentTagMedia(dispatch, tagName, queryParams)
       .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
@@ -208,6 +236,18 @@ export const deselectMedia = (mediaStoreKey, mediaIds) => ({
   mediaStoreKey, 
   mediaIds
 });
+
+export const TOGGLE_SELECT_MEDIA = 'TOGGLE_SELECT_MEDIA';
+export const toggleSelectMedia = (mediaStoreKey, mediaId) => (dispatch, getState) => {
+  const state = getState();
+  const media = state.mediaStore[mediaStoreKey];
+  const selectedMediaIds = get(media, 'selectedMediaIds');
+  if (selectedMediaIds.has(mediaId)) {
+    dispatch(deselectMedia(mediaStoreKey, [mediaId]));
+  } else {
+    dispatch(selectMedia(mediaStoreKey, [mediaId]));
+  }
+};
 
 export const DESELECT_ALL_MEDIA = 'DESELECT_ALL_MEDIA';
 export const deselectAllMedia = (mediaStoreKey) => ({

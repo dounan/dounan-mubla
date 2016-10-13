@@ -24,12 +24,18 @@ class Container extends Component {
   };
 
   handleTokenChange = (props) => {
-    const {onInstagramToken} = props;
+    const {onInstagramToken, instaToken} = props;
     if (onInstagramToken) {
-      onInstagramToken();
+      onInstagramToken(instaToken);
     }
   };
 }
+
+function mapStateToProps(state, ownProps) {
+  return {
+    instaToken: state.instagram.token
+  };
+};
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
@@ -37,12 +43,11 @@ function mapDispatchToProps(dispatch, ownProps) {
   };
 };
 
-const InstagramAuthWallContainer = connect(null, mapDispatchToProps)(Container);
+const InstagramAuthWallContainer = connect(mapStateToProps, mapDispatchToProps)(Container);
 
 InstagramAuthWallContainer.propTypes = {
-  instaToken: PropTypes.string,
   // Called on mount and when the token changes.
-  // onInstagramToken()
+  // onInstagramToken(instaToken)
   onInstagramToken: PropTypes.func
 };
 
