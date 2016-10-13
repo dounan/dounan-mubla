@@ -33,7 +33,8 @@ function mediaHelper(state=INIT_MEDIA, action) {
         ...state,
         isFetching: false,
         mediaList: action.mediaList,
-        pagination: action.pagination
+        pagination: action.pagination,
+        selectedMediaIds: Set()
       };
     case actions.REQUEST_MEDIA_ERROR:
       return {
