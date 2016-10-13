@@ -85,7 +85,7 @@ export const recentMedia = (mediaStoreKey) => (dispatch, getState) => {
   const params = {
     q: {
       'access_token': state.instagram.token,
-      'count': 10
+      'count': 5
     }
   };
   // TODO: handle rejected Promise
@@ -97,6 +97,9 @@ export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
   const state = getState();
   const instaToken = state.instagram.token;
   const media = state.mediaStore[mediaStoreKey];
+  if (!get(media, 'pagination.hasMore') || media.isFetching || media.isFetchingMore) {
+    return;
+  }
   const maxId = get(media, 'pagination.instagram.next_max_id');
   if (!instaToken || !maxId) {
     // TODO: warn
@@ -107,7 +110,7 @@ export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
     q: {
       'access_token': instaToken,
       'max_id': maxId,
-      'count': 10
+      'count': 5
     }
   };
   // TODO: handle rejected Promise
@@ -139,6 +142,9 @@ export const moreSearchMedia = (mediaStoreKey) => (dispatch, getState) => {
   const state = getState();
   const instaToken = state.instagram.token;
   const media = state.mediaStore[mediaStoreKey];
+  if (!get(media, 'pagination.hasMore') || media.isFetching || media.isFetchingMore) {
+    return;
+  }
   const maxTagId = get(media, 'pagination.instagram.next_max_tag_id');
   const tagName = get(media, 'pagination.instagram.tagName');
   if (!instaToken || !maxTagId) {

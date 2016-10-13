@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from "react"
+import BufferedScroll from '../util/BufferedScroll'
 
 function getDisplayName(WrappedComponent) {
   const name = WrappedComponent.displayName || WrappedComponent.name || "Component";
@@ -17,9 +18,6 @@ function getDisplayName(WrappedComponent) {
  */
 export default function windowScroll(gridW=1, gridH=1) {
 
-  const gridCol = (x) => Math.floor(x / gridW);
-  const gridRow = (y) => Math.floor(y / gridH);
-
   return function wrapWithWindowScroll(WrappedComponent) {
 
     class WindowScroll extends Component {
@@ -35,11 +33,12 @@ export default function windowScroll(gridW=1, gridH=1) {
       }
 
       componentDidMount() {
-        window.addEventListener('scroll', this.updateScroll);
+        this._bufferedScroll = new BufferedScroll(window, gridW, gridH);
+        this._bufferedScroll.addListener('scroll', this.updateScroll);
       }
 
       componentWillUnmount() {
-        window.removeEventListener('scroll', this.updateScroll);
+        this._bufferedScroll.removeListener('scroll', this.updateScroll);
       }
 
       render() {
@@ -53,14 +52,11 @@ export default function windowScroll(gridW=1, gridH=1) {
       }
 
       updateScroll = () => {
-        const {windowScrollX, windowScrollY} = this.state;
-        if (gridCol(windowScrollX) !== gridCol(window.scrollX) ||
-            gridRow(windowScrollY) !== gridRow(window.scrollY)) {
-          this.setState({
-            windowScrollX: window.scrollX,
-            windowScrollY: window.scrollY
-          });
-        }
+        console.log('update scroll');
+        this.setState({
+          windowScrollX: window.scrollX,
+          windowScrollY: window.scrollY
+        });
       };
     }
 

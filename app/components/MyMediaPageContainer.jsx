@@ -4,7 +4,6 @@ import {connect} from 'react-redux'
 import {compose} from "redux"
 import * as actions from '../actions'
 import MyMediaPage from './MyMediaPage'
-import windowScroll from './windowScroll'
 import windowSize from './windowSize'
 
 const MEDIA_STORE_KEY = 'myMedia';
@@ -13,18 +12,33 @@ const MAX_ROW_H = 200;
 const WINDOW_SIZE_DEBOUNCE_MS = 300;
 const WINDOW_SCROLL_TILE_SIZE = 3 * MAX_ROW_H;
 
+class Container extends Component {
+
+  componentWillUnmount() {
+    this.props.onDeselectAll();
+  };
+
+  render() {
+    return (
+      <MyMediaPage {...this.props} />
+    );
+  };
+}
+
 function mapStateToProps(state, ownProps) {
+  const {mediaStore} = state;
+  const media = get(mediaStore, MEDIA_STORE_KEY, {});
+  const mediaList = get(media, 'mediaList', []);
   return {
-    mediaStoreKey: MEDIA_STORE_KEY,
-    instaToken: get(state, 'instagram.token'),
+    mediaList: mediaList,
+    isLoadingPage: media.isFetching && mediaList.length === 0,
+    isLoadingMore: media.isFetchingMore,
+    canSelect: true,
+    selectedMediaIds: media.selectedMediaIds,
     maxRowHeight: MAX_ROW_H,
     rowSpacing: SPACING,
     colSpacing: SPACING,
-    scrollX: ownProps.windowScrollX,
-    scrollY: ownProps.windowScrollY,
-    // Set buffer to be larger than the scroll tile to give the new viewport
-    // calculation some time. Creates a smoother looking scrolling experience.
-    viewportBuffer: 2 * WINDOW_SCROLL_TILE_SIZE
+    viewportBuffer: WINDOW_SCROLL_TILE_SIZE
   };
 };
 
@@ -33,13 +47,14 @@ function mapDispatchToProps(dispatch, ownProps) {
     onInstagramToken: (token) => {
       if (token) dispatch(actions.recentMedia(MEDIA_STORE_KEY));
     },
-    onLoadMoreMedia: () => dispatch(actions.moreRecentMedia(MEDIA_STORE_KEY))
+    onLoadMoreMedia: () => dispatch(actions.moreRecentMedia(MEDIA_STORE_KEY)),
+    onItemCheckClick: ({id}) => dispatch(actions.toggleSelectMedia(MEDIA_STORE_KEY, id)),
+    onDeselectAll: () => dispatch(actions.deselectAllMedia(MEDIA_STORE_KEY))
   };
 };
 
 export default compose(
     windowSize(WINDOW_SIZE_DEBOUNCE_MS),
-    windowScroll(WINDOW_SCROLL_TILE_SIZE, WINDOW_SCROLL_TILE_SIZE),
     connect(mapStateToProps, mapDispatchToProps)
-)(MyMediaPage);
+)(Container);
 

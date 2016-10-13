@@ -1,14 +1,10 @@
+import {Set} from 'immutable'
 import React, {Component, PropTypes} from 'react'
-import BrowseContainer from './BrowseContainer'
+import Browse from './Browse'
 import InstagramAuthWallContainer from './InstagramAuthWallContainer'
+import * as pt from './propTypes'
+import ScrollView from './ScrollView'
 import jsvars from './vars'
-
-const WRAPPER_STYLE = {
-  marginTop: jsvars.headerHeight, 
-  paddingTop: jsvars.gutter,
-  paddingLeft: jsvars.gutter,
-  paddingRight: jsvars.gutter
-};
 
 const SEARCH_INSTR_STYLE = {
   fontSize: 24,
@@ -20,32 +16,56 @@ class SearchPage extends Component {
 
   static propTypes = {
     searchQuery: PropTypes.string.isRequired,
-    mediaStoreKey: PropTypes.string.isRequired,
-
     onInstagramToken: PropTypes.func,
 
-    // onLoadMoreMedia(pagination)
+    mediaList: PropTypes.arrayOf(pt.MEDIA),
+    isLoadingPage: PropTypes.bool,
+    isLoadingMore: PropTypes.bool,
     onLoadMoreMedia: PropTypes.func.isRequired,
 
     maxRowHeight: PropTypes.number.isRequired,
     rowSpacing: PropTypes.number,
     colSpacing: PropTypes.number,
 
+    canSelect: PropTypes.bool,
+    selectedMediaIds: PropTypes.instanceOf(Set),
+    // onItemCheckClick(mediaItem)
+    onItemCheckClick: PropTypes.func,
+
     windowWidth: PropTypes.number.isRequired,
     windowHeight: PropTypes.number.isRequired,
-    scrollX: PropTypes.number.isRequired,
-    scrollY: PropTypes.number.isRequired,
     viewportBuffer: PropTypes.number.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      scrollX: 0,
+      scrollY: 0
+    };
+  };
+
   render() {
-    const {onInstagramToken, searchQuery} = this.props;
+    const p = this.props;
+    const scrollViewStyle = {
+      position: 'relative',
+      top: jsvars.headerHeight,
+      width: p.windowWidth,
+      height: p.windowHeight - jsvars.headerHeight,
+      padding: jsvars.gutter,
+      boxSizing: 'border-box'
+    };
+
     return (
-      <InstagramAuthWallContainer
-          onInstagramToken={onInstagramToken}
-          style={WRAPPER_STYLE}>
-        {searchQuery ? this.renderBrowse() : this.renderInstr()}
-      </InstagramAuthWallContainer>
+      <ScrollView
+          style={scrollViewStyle}
+          onBufferedScroll={this.handleScroll}
+          onBottomEdge={p.onLoadMoreMedia}
+          bottomBuffer={p.viewportBuffer}>
+        <InstagramAuthWallContainer onInstagramToken={p.onInstagramToken}>
+          {p.searchQuery ? this.renderBrowse() : this.renderInstr()}
+        </InstagramAuthWallContainer>
+      </ScrollView>
     );
   };
 
@@ -58,13 +78,16 @@ class SearchPage extends Component {
   };
 
   renderBrowse = () => {
-    const {onInstagramToken, searchQuery, ...other} = this.props;
+    const {onInstagramToken, onLoadMoreMedia, searchQuery, ...other} = this.props;
+    const {scrollX, scrollY} = this.state;
     const maxWidth = other.windowWidth - 2 * jsvars.gutter;
     return (
-      <BrowseContainer
+      <Browse
           {...other}
           emptyView={this.renderNoResults()}
-          maxWidth={maxWidth} />
+          maxWidth={maxWidth}
+          scrollX={scrollX}
+          scrollY={scrollY} />
     );
   };
 
@@ -74,6 +97,13 @@ class SearchPage extends Component {
         No results found
       </div>
     );
+  };
+
+  handleScroll = ({scrollTop, scrollLeft}) => {
+    this.setState({
+      scrollX: scrollLeft,
+      scrollY: scrollTop
+    });
   };
 }
 

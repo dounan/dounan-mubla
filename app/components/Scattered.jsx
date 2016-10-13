@@ -33,26 +33,19 @@ class Scattered extends Component {
 
   constructor(props) {
     super(props);
-    const indexState = this.indexItems(props.items);
-    this.state = {
-      ...indexState,
-      viewportRbushItems: this.searchViewport(indexState.rbushIndex, props.viewport)
-    };
+    this.indexItems(props.items);
+    this.updateViewportItems(props.viewport);
   };
 
   componentWillReceiveProps(nextProps) {
     const p = this.props;
-    let rbushIndex = this.state.rbushIndex;
     if (p.items !== nextProps.items) {
-      const indexState = this.indexItems(nextProps.items);
-      rbushIndex = indexState.rbushIndex;
-      this.setState(indexState);
+      this.indexItems(nextProps.items);
     }
     if (p.items !== nextProps.items ||
         p.viewport !== nextProps.viewport) {
-      this.setState({
-        viewportRbushItems: this.searchViewport(rbushIndex, nextProps.viewport)
-      });
+      // Must come after updating indexItems.
+      this.updateViewportItems(nextProps.viewport);
     }
   };
 
@@ -61,11 +54,10 @@ class Scattered extends Component {
   };
 
   render() {
-    const {width, height} = this.state;
     const wrapperStyle = {
       position: 'relative',
-      width,
-      height
+      width: this._width,
+      height: this._height
     };
     return (
       <div style={wrapperStyle}>
@@ -75,9 +67,8 @@ class Scattered extends Component {
   };
 
   renderItems = () => {
-    const {viewportRbushItems} = this.state;
-    if (viewportRbushItems) {
-      return viewportRbushItems.map(this.renderRbushItem);
+    if (this._viewportRbushItems) {
+      return this._viewportRbushItems.map(this.renderRbushItem);
     } else {
       return this.props.items.map(this.renderItem);
     }
@@ -119,11 +110,9 @@ class Scattered extends Component {
       rbushItems.push(this.toRbushItem(item, i));
     });
     rbushIndex.load(rbushItems);
-    return {
-      rbushIndex,
-      width,
-      height
-    };
+    this._rbushIndex = rbushIndex;
+    this._width = width;
+    this._height = height;
   };
 
   toRbushItem = (item, i) => ({
@@ -133,6 +122,10 @@ class Scattered extends Component {
     maxY: item.top + item.height,
     idx: i
   });
+
+  updateViewportItems = (viewport) => {
+    this._viewportRbushItems = this.searchViewport(this._rbushIndex, viewport);
+  };
 
   searchViewport = (rbushIndex, viewport) => {
     if (!rbushIndex || !viewport) {

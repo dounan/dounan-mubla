@@ -28,12 +28,7 @@ class Grid extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      scatteredItems: List()
-    };
-  }
-
-  componentDidMount() {
+    this._scatteredItems = List();
     this.layout(this.props);
   }
 
@@ -57,7 +52,7 @@ class Grid extends Component {
     };
     return (
       <Scattered
-          items={this.state.scatteredItems}
+          items={this._scatteredItems}
           viewsProps={viewsProps}
           sharedViewProps={sharedViewProps}
           viewRenderer={viewRenderer}
@@ -95,7 +90,7 @@ class Grid extends Component {
         rowWidth += colSpacing;
       }
     });
-    this.setState({scatteredItems});
+    this._scatteredItems = scatteredItems;
   };
 
   scaleRow = (scatteredItems, ratio, colSpacing, start, end) => {

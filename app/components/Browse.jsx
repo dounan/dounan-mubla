@@ -19,10 +19,8 @@ const SMALL_LOADING_STYLE = {
 class Browse extends Component {
 
   static propTypes = {
-    isLoadingPage: PropTypes.bool,
     mediaList: PropTypes.arrayOf(pt.MEDIA),
-    hasMoreMedia: PropTypes.bool,
-    onLoadMoreMedia: PropTypes.func,
+    isLoadingPage: PropTypes.bool,
     isLoadingMore: PropTypes.bool,
 
     emptyView: PropTypes.node,
@@ -87,19 +85,12 @@ class Browse extends Component {
   };
 
   renderLoadMore = () => {
-    const {hasMoreMedia, isLoadingMore, onLoadMoreMedia} = this.props;
-    if (!hasMoreMedia) {
+    const {isLoadingMore} = this.props;
+    if (!isLoadingMore) {
       return null;
     }
-    if (isLoadingMore) {
-      return (
-        <BlockLoader width={50} style={SMALL_LOADING_STYLE} />
-      );
-    }
     return (
-      <Button onClick={onLoadMoreMedia}>
-        Load More
-      </Button>
+      <BlockLoader width={50} style={SMALL_LOADING_STYLE} />
     );
   };
 }

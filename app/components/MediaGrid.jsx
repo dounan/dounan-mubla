@@ -32,9 +32,7 @@ class MediaGrid extends Component {
   constructor(props) {
     super(props);
     this._idToIdx = {};
-    this.state = Object.assign({
-      viewport: null
-    }, this.processMediaList(props));
+    this.processMediaList(props);
   }
 
   componentDidMount() {
@@ -44,7 +42,7 @@ class MediaGrid extends Component {
   componentWillReceiveProps(nextProps) {
     const p = this.props;
     if (p.mediaList !== nextProps.mediaList) {
-      this.setState(this.processMediaList(nextProps));
+      this.processMediaList(nextProps);
     }
     if (p.selectedMediaIds !== nextProps.selectedMediaIds) {
       this.updateSelectedMedia(nextProps);
@@ -63,21 +61,20 @@ class MediaGrid extends Component {
 
   render() {
     const p = this.props;
-    const {viewsProps, gridItems, viewport} = this.state;
     const sharedViewProps = {
       canSelect: p.canSelect
     };
     return (
       <Grid
-          items={gridItems}
-          viewsProps={viewsProps}
+          items={this._gridItems}
+          viewsProps={this._viewsProps}
           sharedViewProps={sharedViewProps}
           viewRenderer={SelectableMediaThumb}
           maxWidth={p.maxWidth}
           maxRowHeight={p.maxRowHeight}
           rowSpacing={p.rowSpacing}
           colSpacing={p.colSpacing}
-          viewport={viewport} />
+          viewport={this._viewport} />
     );
   }
 
@@ -99,10 +96,8 @@ class MediaGrid extends Component {
       viewsProps = viewsProps.push(toViewProps(mediaItem));
       gridItems = gridItems.push(this.toGridItem(mediaItem));
     }
-    return {
-      viewsProps,
-      gridItems
-    };
+    this._viewsProps = viewsProps;
+    this._gridItems = gridItems;
   };
 
   toViewProps = (canSelect, selectedMediaIds, mediaItem) => {
@@ -125,16 +120,14 @@ class MediaGrid extends Component {
 
   updateSelectedMedia = (props) => {
     const p = this.props;
-    let viewsProps = this.state.viewsProps;
     const selected = props.selectedMediaIds.subtract(p.selectedMediaIds);
     const deselected = p.selectedMediaIds.subtract(props.selectedMediaIds);
     selected.forEach((id) => {
-      viewsProps = this.setSelected(viewsProps, id, true);
+      this._viewsProps = this.setSelected(this._viewsProps, id, true);
     });
     deselected.forEach((id) => {
-      viewsProps = this.setSelected(viewsProps, id, false);
+      this._viewsProps = this.setSelected(this._viewsProps, id, false);
     });
-    this.setState({viewsProps});
   };
 
   setSelected = (viewsProps, mediaId, selected) => {
@@ -152,7 +145,7 @@ class MediaGrid extends Component {
     };
     const elem = ReactDOM.findDOMNode(this);
     const viewport = calcViewport(clientRect, elem, viewportBuffer);
-    this.setState({viewport});
+    this._viewport = viewport;
   };
 }
  
