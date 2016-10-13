@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import * as actions from '../actions'
@@ -9,6 +10,8 @@ function mapStateToProps(state, ownProps) {
   const {pathname} = routeLocation;
   return {
     isMyMediaActive: pathname === '/',
+    isSearchActive: pathname === '/search',
+    searchQuery: get(routeLocation, 'query.q', ''),
     isAlbumsActive: pathname === '/albums'
   };
 };
@@ -16,7 +19,8 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     onMyMediaClick: () => dispatch(actions.gotoMyMedia()),
-    onAlbumsClick: () => dispatch(actions.gotoAlbumList())
+    onAlbumsClick: () => dispatch(actions.gotoAlbumList()),
+    onSearchChange: (q) => dispatch(actions.gotoSearch({q}))
   };
 };
 

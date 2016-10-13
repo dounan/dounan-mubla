@@ -12,6 +12,7 @@ import AlbumListContainer from './AlbumListContainer'
 import InstaAccessTokenContainer from './InstaAccessTokenContainer'
 import MyMediaPageContainer from './MyMediaPageContainer'
 import Root from './Root'
+import SearchPageContainer from './SearchPageContainer'
 import TestComponent from './TestComponent'
 
 // NOTE: show DevTools in production so you can play with the data.
@@ -49,6 +50,7 @@ ReactDOM.render(
     <Router history={history}>
       <Route path='/' component={AppContainer}>
         <IndexRoute component={MyMediaPageContainer} />
+        <Route path='/search' component={SearchPageContainer} />
         <Route path='/albums' component={AlbumListContainer} />
       </Route>
       <Route path='access_token=:token' component={InstaAccessTokenContainer} />

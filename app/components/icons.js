@@ -7,7 +7,8 @@ const iconMap = {
   album: addFa(fa['fa-book']),
   checkCircle: addFa(fa['fa-check-circle']),
   close: addFa(fa['fa-times']),
-  myMedia: addFa(fa['fa-th'])
+  myMedia: addFa(fa['fa-th']),
+  search: addFa(fa['fa-search'])
 };
 
 export const getIcon = (name) => {

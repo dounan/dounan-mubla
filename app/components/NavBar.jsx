@@ -1,8 +1,10 @@
+import classNames from 'classnames'
 import React, {Component, PropTypes} from 'react'
 import {getIcon} from './icons'
 import {getImage} from './images'
 import css from './NavBar.css'
 import NavLink from './NavLink'
+import SearchInput from './SearchInput'
 import jsvars from './vars'
 
 class NavBar extends Component {
@@ -10,6 +12,10 @@ class NavBar extends Component {
   static propTypes = {
     isMyMediaActive: PropTypes.bool,
     onMyMediaClick: PropTypes.func.isRequired,
+    isSearchActive: PropTypes.bool,
+    searchQuery: PropTypes.string,
+    // onSearchChange(newSearchQuery)
+    onSearchChange: PropTypes.func.isRequired,
     isAlbumsActive: PropTypes.bool,
     onAlbumsClick: PropTypes.func.isRequired
   };
@@ -35,6 +41,12 @@ class NavBar extends Component {
                 label='Albums'
                 active={p.isAlbumsActive}
                 onClick={p.onAlbumsClick} />
+          </li>
+          <li className={classNames(css.navitem, css.search)}>
+            <SearchInput
+                value={p.searchQuery}
+                placeholder='Search...'
+                onSearchChange={p.onSearchChange} />
           </li>
         </ul>
       </div>

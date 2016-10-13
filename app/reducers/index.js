@@ -72,6 +72,13 @@ function mediaHelper(state=INIT_MEDIA, action) {
         ...state,
         selectedMediaIds: Set()
       }
+    case actions.CLEAR_MEDIA:
+      return {
+        ...state,
+        mediaList: [],
+        pagination: {},
+        selectedMediaIds: Set()
+      };
     case actions.EXTEND_MEDIA_LIST:
       return {
         ...state,

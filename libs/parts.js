@@ -11,7 +11,9 @@ const postcssPlugins = [
   cssvariables({
     variables: {
       '--blue': jsvars.blue,
-      '--gutter': jsvars.gutter + 'px'
+      '--font-family': jsvars.fontFamily,
+      '--gutter': jsvars.gutter + 'px',
+      '--gray': jsvars.gray
     }
   })
 ];

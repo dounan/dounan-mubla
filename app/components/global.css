@@ -3,7 +3,7 @@
  * Prefer locally scoped CSS files per component.
  */
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--font-family);
   font-weight: 300;
   margin: 0;
 }

@@ -9,8 +9,8 @@ export function authUrl() {
   const u = new URI(window.location);
   u.hash("");
   const redirect = encodeURIComponent(u.toString());
-  return `${OAUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=token`;
-}
+  return `${OAUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=public_content`;
+};
 
 // Converts an instagram media object to mubla media object.
 export function toMedia(o) {
@@ -26,6 +26,13 @@ export function toMedia(o) {
   return media;
 };
 
+export function emptyBody() {
+  return {
+    data: [],
+    meta: {code: 200}
+  };
+};
+
 export function extractMediaList(body) {
   return get(body, 'data', []).map(toMedia);
 };
@@ -34,8 +41,20 @@ export function extractPagination(body) {
   return get(body, 'pagination');
 };
 
+export function addPaginationData(body, data) {
+  return {
+    ...body,
+    pagination: Object.assign({}, extractPagination(body), data)
+  };
+};
+
 export function hasMore(body) {
-  return !!get(body, 'pagination.next_max_id');
+  const p = get(body, 'pagination', {});
+  return !!p['next_max_id'] || !!p['next_max_tag_id'];
+};
+
+export function extractTopTagName(body) {
+  return get(body, 'data.0.name');
 };
 
 export function isSuccess(body) {

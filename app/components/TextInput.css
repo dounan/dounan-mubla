@@ -1,0 +1,58 @@
+.empty {
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.shaded {
+  --placeholder-color: rgba(0, 0, 0, 0.3);
+  --placeholder-font-weight: 600;
+  padding: 0.3em;
+  border: 0;
+  outline: 0;
+  background-color: rgba(0, 0, 0, 0.04);
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.shaded::-webkit-input-placeholder { /* Chrome */
+  color: var(--placeholder-color);
+  font-family: var(--font-family);
+  font-weight: var(--placeholder-font-weight);
+  transition: opacity 200ms ease-in-out;
+}
+.shaded:focus::-webkit-input-placeholder {
+  opacity: 0.5;
+}
+.shaded:-ms-input-placeholder { /* IE 10+ */
+  color: var(--placeholder-color);
+  font-family: var(--font-family);
+  font-weight: var(--placeholder-font-weight);
+  transition: opacity 200ms ease-in-out;
+}
+.shaded:focus:-ms-input-placeholder {
+  opacity: 0.5;
+}
+.shaded::-moz-placeholder { /* Firefox 19+ */
+  color: var(--placeholder-color);
+  font-family: var(--font-family);
+  font-weight: var(--placeholder-font-weight);
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+.shaded:focus::-moz-placeholder {
+  opacity: 0.5;
+}
+.shaded:-moz-placeholder { /* Firefox 4 - 18 */
+  color: var(--placeholder-color);
+  font-family: var(--font-family);
+  font-weight: var(--placeholder-font-weight);
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+.shaded:focus:-moz-placeholder {
+  opacity: 0.5;
+}
+

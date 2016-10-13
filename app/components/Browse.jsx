@@ -1,4 +1,5 @@
 import {Set} from 'immutable'
+import isEmpty from 'lodash/isEmpty'
 import React, {Component, PropTypes} from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import BlockLoader from './BlockLoader'
@@ -23,6 +24,8 @@ class Browse extends Component {
     hasMoreMedia: PropTypes.bool,
     onLoadMoreMedia: PropTypes.func,
     isLoadingMore: PropTypes.bool,
+
+    emptyView: PropTypes.node,
 
     canSelect: PropTypes.bool,
     selectedMediaIds: PropTypes.instanceOf(Set),
@@ -62,8 +65,8 @@ class Browse extends Component {
 
   renderMediaList = () => {
     const p = this.props;
-    if (!p.mediaList) {
-      return null;
+    if (isEmpty(p.mediaList)) {
+      return p.emptyView;
     }
     return (
       <MediaGrid

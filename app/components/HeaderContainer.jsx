@@ -6,9 +6,9 @@ import * as pt from './propTypes'
 
 function mapStateToProps(state, ownProps) {
   const {mediaStore} = state;
-  const myMedia = mediaStore.myMedia;
   return {
-    myMediaSelectedBarVisible: get(myMedia, 'selectedMediaIds.size', 0) > 0
+    myMediaSelectedBarVisible: get(mediaStore, 'myMedia.selectedMediaIds.size', 0) > 0,
+    searchSelectedBarVisible: get(mediaStore, 'search.selectedMediaIds.size', 0) > 0
   };
 };
 

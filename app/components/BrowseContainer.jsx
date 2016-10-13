@@ -65,6 +65,8 @@ BrowseContainer.propTypes = {
   // onLoadMoreMedia(pagination)
   onLoadMoreMedia: PropTypes.func.isRequired,
 
+  emptyView: PropTypes.node,
+
   maxRowHeight: PropTypes.number.isRequired,
   rowSpacing: PropTypes.number,
   colSpacing: PropTypes.number,

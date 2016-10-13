@@ -1,6 +1,6 @@
 .navlink {
   text-decoration: none;
-  color: #aaa;
+  color: var(--gray);
   font-size: 16px;
   font-weight: 400;
 }

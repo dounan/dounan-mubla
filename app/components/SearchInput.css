@@ -1,0 +1,17 @@
+.wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.input {
+  padding-left: 1.7em !important;
+}
+
+.action {
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 0.4em;
+  transform: translateY(-50%);
+  color: var(--gray);
+}
+
