@@ -1,4 +1,3 @@
-import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
@@ -14,12 +13,16 @@ const MAX_ROW_H = 200;
 const WINDOW_SIZE_DEBOUNCE_MS = 300;
 const SCROLL_TILE_SIZE = 3 * MAX_ROW_H;
 
+function doSearch(dispatch) {
+  dispatch(actions.doSearch(MEDIA_STORE_KEY));
+};
+
 class Container extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const p = this.props;
     if (prevProps.searchQuery !== p.searchQuery) {
-      p.onSearch();
+      p.onSearchChange();
     }
   };
 
@@ -34,26 +37,12 @@ class Container extends Component {
   };
 }
 
-const getSearchQuery = (ownProps) => get(ownProps, 'location.query.q', '');
-
-function showSearching(dispatch) {
-  dispatch(actions.requestMedia(MEDIA_STORE_KEY));
-}
-
-function doSearch(dispatch, searchQuery) {
-  dispatch(actions.clearMedia(MEDIA_STORE_KEY));
-  if (searchQuery) {
-    dispatch(actions.searchMedia(MEDIA_STORE_KEY, searchQuery));
-  }
-};
-const debouncedDoSearch = debounce(doSearch, 400);
-
 function mapStateToProps(state, ownProps) {
   const {mediaStore} = state;
   const media = get(mediaStore, MEDIA_STORE_KEY, {});
   const mediaList = get(media, 'mediaList', []);
   return {
-    searchQuery: getSearchQuery(ownProps),
+    searchQuery: get(ownProps, 'location.query.q', ''),
     mediaList: mediaList,
     isLoadingPage: media.isFetching && mediaList.length === 0,
     isLoadingMore: media.isFetchingMore,
@@ -69,14 +58,9 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     onInstagramToken: (token) => {
-      if (token) doSearch(dispatch, getSearchQuery(ownProps));
+      if (token) doSearch(dispatch);
     },
-    onSearch: () => {
-      // This prevents a weird state where the 'No results' view appears while
-      // we are waiting for the debounced doSearch to run.
-      showSearching(dispatch);
-      debouncedDoSearch(dispatch, getSearchQuery(ownProps));
-    },
+    onSearchChange: () => doSearch(dispatch),
     onLoadMoreMedia: () => dispatch(actions.moreSearchMedia(MEDIA_STORE_KEY)),
     onItemCheckClick: ({id}) => dispatch(actions.toggleSelectMedia(MEDIA_STORE_KEY, id)),
     onDeselectAll: () => dispatch(actions.deselectAllMedia(MEDIA_STORE_KEY))

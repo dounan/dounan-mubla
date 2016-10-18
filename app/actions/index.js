@@ -118,6 +118,15 @@ export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
       .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey));
 };
 
+export const doSearch = (mediaStoreKey) => (dispatch, getState) => {
+  const state = getState();
+  const searchQuery = get(state, 'routing.locationBeforeTransitions.query.q');
+  dispatch(clearMedia(mediaStoreKey));
+  if (searchQuery) {
+    dispatch(searchMedia(mediaStoreKey, searchQuery));
+  }
+};
+
 export const searchMedia = (mediaStoreKey, query) => (dispatch, getState) => {
   const state = getState();
   const instaToken = state.instagram.token;
@@ -273,7 +282,10 @@ export const clearMedia = (mediaStoreKey) => ({
 
 export const gotoMyMedia = () => push('/');
 
-export const gotoSearch = (queryParams=null) => push({pathname: '/search', query:queryParams});
+export const gotoSearch = (searchQuery) => push({
+  pathname: '/search',
+  query:{q: searchQuery}
+});
 
 export const gotoAlbumList = () => push('/albums');
 
