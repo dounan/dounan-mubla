@@ -9,7 +9,9 @@ class CheckSelect extends Component {
   static propTypes = {
     isSelected: PropTypes.bool,
     canSelect: PropTypes.bool,
-    onCheckClick: PropTypes.func
+    onCheckClick: PropTypes.func,
+    hideUntilHover: PropTypes.bool,
+    checkZIndex: PropTypes.number
   };
 
   render() {
@@ -17,17 +19,21 @@ class CheckSelect extends Component {
       isSelected,
       canSelect,
       onCheckClick,
+      hideUntilHover,
+      checkZIndex,
       children,
-      style,
+      className,
       ...other
     } = this.props;
 
-    const wrapperStyle = Object.assign({
-      position: 'relative'
-    }, style);
+    const wrapperClass = classNames(className, css.wrapper, {
+      [css.hideUntilHover]: hideUntilHover
+    });
 
     return (
-      <div {...other} style={wrapperStyle}>
+      <div
+          {...other}
+          className={wrapperClass}>
         {this.renderCheck()}
         {children}
       </div>
@@ -35,17 +41,21 @@ class CheckSelect extends Component {
   }
 
   renderCheck = () => {
-    const {isSelected, canSelect, onCheckClick} = this.props;
+    const {isSelected, canSelect, onCheckClick, checkZIndex} = this.props;
     if (!canSelect) {
       return null;
     }
     const className = classNames(css.check, {
       [css.selected]: isSelected
     });
+    const style = {
+      zIndex: checkZIndex
+    };
     return (
       <Button
           styleType='empty'
           className={className}
+          style={style}
           onClick={onCheckClick}>
         <span className={getIcon('checkCircle')} />
       </Button>

@@ -1,7 +1,9 @@
+import classNames from 'classnames'
 import React, {Component, PropTypes} from 'react'
 import CheckSelect from './CheckSelect'
 import MediaThumb from './MediaThumb'
 import * as pt from './propTypes'
+import css from './SelectableMediaThumb.css'
 
 const WRAPPER_STYLE = {
   width: '100%',
@@ -26,15 +28,25 @@ class SelectableMediaThumb extends Component {
       ...other
     } = this.props;
 
+    const wrapperClass = classNames(css.wrapper, {
+      [css.selected]: isSelected
+    });
+
     return (
-      <CheckSelect
-          {...other}
-          isSelected={isSelected}
-          canSelect={canSelect}
-          onCheckClick={onCheckClick}
-          style={WRAPPER_STYLE}>
-        <MediaThumb media={media} />
-      </CheckSelect>
+      <div className={wrapperClass}>
+        <CheckSelect
+            {...other}
+            isSelected={isSelected}
+            canSelect={canSelect}
+            onCheckClick={onCheckClick}
+            hideUntilHover={true}
+            checkZIndex={1}
+            style={WRAPPER_STYLE}>
+          <div className={css.hoverFade} />
+          <div className={css.selectedFade} />
+          <MediaThumb media={media} />
+        </CheckSelect>
+      </div>
     );
   }
 }
