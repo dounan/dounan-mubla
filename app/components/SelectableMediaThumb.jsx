@@ -14,6 +14,7 @@ class SelectableMediaThumb extends Component {
 
   static propTypes = {
     media: pt.MEDIA.isRequired,
+    targetThumbHeight: PropTypes.number.isRequired,
     isSelected: PropTypes.bool,
     canSelect: PropTypes.bool,
     onCheckClick: PropTypes.func
@@ -22,6 +23,7 @@ class SelectableMediaThumb extends Component {
   render() {
     const {
       media,
+      targetThumbHeight,
       isSelected,
       canSelect,
       onCheckClick,
@@ -44,7 +46,9 @@ class SelectableMediaThumb extends Component {
             style={WRAPPER_STYLE}>
           <div className={css.hoverFade} />
           <div className={css.selectedFade} />
-          <MediaThumb media={media} />
+          <MediaThumb
+              media={media}
+              targetThumbHeight={targetThumbHeight} />
         </CheckSelect>
       </div>
     );

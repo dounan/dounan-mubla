@@ -1,4 +1,5 @@
 import {List, Set} from 'immutable'
+import get from 'lodash/get'
 import React, {Component, PropTypes} from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -86,8 +87,8 @@ class MediaGrid extends Component {
   };
 
   processMediaList = (props) => {
-    const {mediaList, canSelect, selectedMediaIds} = props;
-    const toViewProps = this.toViewProps.bind(null, canSelect, selectedMediaIds);
+    const {mediaList} = props;
+    const toViewProps = this.toViewProps.bind(null, props);
     let viewsProps = List();
     let gridItems = List();
     for (let i in mediaList) {
@@ -100,22 +101,28 @@ class MediaGrid extends Component {
     this._gridItems = gridItems;
   };
 
-  toViewProps = (canSelect, selectedMediaIds, mediaItem) => {
+  toViewProps = (props, mediaItem) => {
+    const {canSelect, selectedMediaIds, maxRowHeight} = props;
     const isSelected = selectedMediaIds && selectedMediaIds.has(mediaItem.id);
     return {
       media: mediaItem,
       canSelect: canSelect,
       isSelected: isSelected,
-      onCheckClick: this.handleCheckClick.bind(null, mediaItem)
+      onCheckClick: this.handleCheckClick.bind(null, mediaItem),
+      targetThumbHeight: maxRowHeight
     };
   };
 
   toGridItem = (mediaItem) => {
-    const thumb = mediaItem.images[0];
     return {
       id: mediaItem.id,
-      aspectRatio: thumb.width / thumb.height
+      aspectRatio: this.aspect(mediaItem)
     };
+  };
+
+  aspect = (mediaItem) => {
+    const thumb = get(mediaItem, 'images.0');
+    return thumb ? thumb.width / thumb.height : 1;
   };
 
   updateSelectedMedia = (props) => {
