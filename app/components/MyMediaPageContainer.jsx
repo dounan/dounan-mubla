@@ -31,8 +31,8 @@ function mapStateToProps(state, ownProps) {
   const mediaList = get(media, 'mediaList', []);
   return {
     mediaList: mediaList,
-    isLoadingPage: media.isFetching && mediaList.length === 0,
-    isLoadingMore: media.isFetchingMore,
+    isLoadingPage: media.fetchId && mediaList.length === 0,
+    isLoadingMore: !!media.fetchMoreId,
     canSelect: true,
     selectedMediaIds: media.selectedMediaIds,
     maxRowHeight: MAX_ROW_H,

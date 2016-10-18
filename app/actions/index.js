@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import uuid from 'node-uuid'
 import * as api from '../api'
 import * as insta from './instagram'
 import {push} from 'react-router-redux'
@@ -35,43 +36,49 @@ export const restoreInstaAccessToken = () => (dispatch) => {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const REQUEST_MEDIA = 'REQUEST_MEDIA';
-export const requestMedia = (mediaStoreKey) => ({
+const requestMedia = (mediaStoreKey, fetchId) => ({
   type: REQUEST_MEDIA,
-  mediaStoreKey
+  mediaStoreKey,
+  fetchId
 });
 
 export const RECEIVE_MEDIA = 'RECEIVE_MEDIA';
-const receiveMedia = (mediaStoreKey, mediaList, pagination) => ({
+const receiveMedia = (mediaStoreKey, fetchId, mediaList, pagination) => ({
   type: RECEIVE_MEDIA,
   mediaStoreKey,
+  fetchId,
   mediaList,
   pagination
 });
 
 export const REQUEST_MEDIA_ERROR = 'REQUEST_MEDIA_ERROR';
-const requestMediaError = (mediaStoreKey) => ({
+const requestMediaError = (mediaStoreKey, fetchId) => ({
   type: REQUEST_MEDIA_ERROR,
-  mediaStoreKey
+  mediaStoreKey,
+  fetchId
 });
 
 export const REQUEST_MORE_MEDIA = 'REQUEST_MORE_MEDIA';
-const requestMoreMedia = (mediaStoreKey) => ({
+const requestMoreMedia = (mediaStoreKey, fetchMoreId) => ({
   type: REQUEST_MORE_MEDIA,
-  mediaStoreKey
+  mediaStoreKey,
+  fetchMoreId,
 });
 
 export const RECEIVE_MORE_MEDIA = 'RECEIVE_MORE_MEDIA';
-const receiveMoreMedia = (mediaStoreKey, mediaList, pagination) => ({
+const receiveMoreMedia = (mediaStoreKey, fetchMoreId, mediaList, pagination) => ({
   type: RECEIVE_MORE_MEDIA,
+  mediaStoreKey,
+  fetchMoreId,
   mediaList,
-  pagination,
-  mediaStoreKey
+  pagination
 });
 
 export const REQUEST_MORE_MEDIA_ERROR = 'REQUEST_MORE_MEDIA_ERROR';
-const requestMoreMediaError = (mediaStoreKey) => ({
+const requestMoreMediaError = (mediaStoreKey, fetchMoreId) => ({
   type: REQUEST_MORE_MEDIA_ERROR,
-  mediaStoreKey
+  mediaStoreKey,
+  fetchMoreId
 });
 
 export const recentMedia = (mediaStoreKey) => (dispatch, getState) => {
@@ -81,7 +88,8 @@ export const recentMedia = (mediaStoreKey) => (dispatch, getState) => {
     // TODO: warn
     return;
   }
-  dispatch(requestMedia(mediaStoreKey));
+  const fetchId = uuid.v4();
+  dispatch(requestMedia(mediaStoreKey, fetchId));
   const params = {
     q: {
       'access_token': state.instagram.token,
@@ -90,14 +98,14 @@ export const recentMedia = (mediaStoreKey) => (dispatch, getState) => {
   };
   // TODO: handle rejected Promise
   dispatch(api.instaRecentMedia(params))
-      .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey));
+      .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey, fetchId));
 };
 
 export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
   const state = getState();
   const instaToken = state.instagram.token;
   const media = state.mediaStore[mediaStoreKey];
-  if (!get(media, 'pagination.hasMore') || media.isFetching || media.isFetchingMore) {
+  if (!get(media, 'pagination.hasMore') || media.fetchId || media.fetchMoreId) {
     return;
   }
   const maxId = get(media, 'pagination.instagram.next_max_id');
@@ -105,7 +113,8 @@ export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
     // TODO: warn
     return;
   }
-  dispatch(requestMoreMedia(mediaStoreKey));
+  const fetchMoreId = uuid.v4();
+  dispatch(requestMoreMedia(mediaStoreKey, fetchMoreId));
   const params = {
     q: {
       'access_token': instaToken,
@@ -115,7 +124,7 @@ export const moreRecentMedia = (mediaStoreKey) => (dispatch, getState) => {
   };
   // TODO: handle rejected Promise
   dispatch(api.instaRecentMedia(params))
-      .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey));
+      .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey, fetchMoreId));
 };
 
 export const doSearch = (mediaStoreKey) => (dispatch, getState) => {
@@ -134,7 +143,8 @@ export const searchMedia = (mediaStoreKey, query) => (dispatch, getState) => {
     // TODO: warn
     return;
   }
-  dispatch(requestMedia(mediaStoreKey));
+  const fetchId = uuid.v4();
+  dispatch(requestMedia(mediaStoreKey, fetchId));
   const params = {
     q: {
       'access_token': instaToken,
@@ -144,14 +154,14 @@ export const searchMedia = (mediaStoreKey, query) => (dispatch, getState) => {
   // TODO: handle rejected Promise
   dispatch(api.instaSearchTags(params))
       .then(handleInstaSearchTagSuccess.bind(null, dispatch, mediaStoreKey, instaToken))
-      .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey));
+      .then(handleLoadMediaSuccess.bind(null, dispatch, mediaStoreKey, fetchId));
 };
 
 export const moreSearchMedia = (mediaStoreKey) => (dispatch, getState) => {
   const state = getState();
   const instaToken = state.instagram.token;
   const media = state.mediaStore[mediaStoreKey];
-  if (!get(media, 'pagination.hasMore') || media.isFetching || media.isFetchingMore) {
+  if (!get(media, 'pagination.hasMore') || media.fetchId || media.fetchMoreId) {
     return;
   }
   const maxTagId = get(media, 'pagination.instagram.next_max_tag_id');
@@ -160,7 +170,8 @@ export const moreSearchMedia = (mediaStoreKey) => (dispatch, getState) => {
     // TODO: warn
     return;
   }
-  dispatch(requestMoreMedia(mediaStoreKey));
+  const fetchMoreId = uuid.v4();
+  dispatch(requestMoreMedia(mediaStoreKey, fetchMoreId));
   const queryParams = {
     'access_token': instaToken,
     'max_tag_id': maxTagId,
@@ -168,7 +179,7 @@ export const moreSearchMedia = (mediaStoreKey) => (dispatch, getState) => {
   };
   // TODO: handle rejected Promise
   instaRecentTagMedia(dispatch, tagName, queryParams)
-      .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey));
+      .then(handleMoreMediaSuccess.bind(null, dispatch, mediaStoreKey, fetchMoreId));
 };
 
 function handleInstaSearchTagSuccess(dispatch, mediaStoreKey, instaToken, result) {
@@ -200,7 +211,7 @@ function instaRecentTagMedia(dispatch, tagName, queryParams) {
       }));
 };
 
-function handleLoadMediaSuccess(dispatch, mediaStoreKey, result) {
+function handleLoadMediaSuccess(dispatch, mediaStoreKey, fetchId, result) {
   const instaBody = result.body;
   if (insta.isSuccess(instaBody)) {
     const mediaList = insta.extractMediaList(instaBody);
@@ -208,14 +219,14 @@ function handleLoadMediaSuccess(dispatch, mediaStoreKey, result) {
       hasMore: insta.hasMore(instaBody),
       instagram: insta.extractPagination(instaBody)
     };
-    dispatch(receiveMedia(mediaStoreKey, mediaList, pagination));
+    dispatch(receiveMedia(mediaStoreKey, fetchId, mediaList, pagination));
   } else {
-    dispatch(requestMediaError(mediaStoreKey));
+    dispatch(requestMediaError(mediaStoreKey, fetchId));
     handleInstaError(dispatch, instaBody);
   }
 };
 
-function handleMoreMediaSuccess(dispatch, mediaStoreKey, result) {
+function handleMoreMediaSuccess(dispatch, mediaStoreKey, fetchMoreId, result) {
   const instaBody = result.body;
   if (insta.isSuccess(instaBody)) {
     const mediaList = insta.extractMediaList(instaBody);
@@ -223,9 +234,9 @@ function handleMoreMediaSuccess(dispatch, mediaStoreKey, result) {
       hasMore: insta.hasMore(instaBody),
       instagram: insta.extractPagination(instaBody)
     };
-    dispatch(receiveMoreMedia(mediaStoreKey, mediaList, pagination));
+    dispatch(receiveMoreMedia(mediaStoreKey, fetchMoreId, mediaList, pagination));
   } else {
-    dispatch(requestMoreMediaError(mediaStoreKey));
+    dispatch(requestMoreMediaError(mediaStoreKey, fetchMoreId));
     handleInstaError(dispatch, instaBody);
   }
 };

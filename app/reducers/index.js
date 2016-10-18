@@ -26,37 +26,41 @@ function mediaHelper(state=INIT_MEDIA, action) {
     case actions.REQUEST_MEDIA:
       return {
         ...state,
-        isFetching: true
+        fetchId: action.fetchId
       };
     case actions.RECEIVE_MEDIA:
+      if (state.fetchId !== action.fetchId) return state;
       return {
         ...state,
-        isFetching: false,
+        fetchId: null,
         mediaList: action.mediaList,
         pagination: action.pagination,
         selectedMediaIds: Set()
       };
     case actions.REQUEST_MEDIA_ERROR:
+      if (state.fetchId !== action.fetchId) return state;
       return {
         ...state,
-        isFetching: false
+        fetchId: null
       };
     case actions.REQUEST_MORE_MEDIA:
       return {
         ...state,
-        isFetchingMore: true
+        fetchMoreId: action.fetchMoreId
       };
     case actions.RECEIVE_MORE_MEDIA:
+      if (state.fetchMoreId !== action.fetchMoreId) return state;
       return {
         ...state,
-        isFetchingMore: false,
+        fetchMoreId: null,
         mediaList: state.mediaList.concat(action.mediaList),
         pagination: action.pagination
       };
     case actions.REQUEST_MORE_MEDIA_ERROR:
+      if (state.fetchMoreId !== action.fetchMoreId) return state;
       return {
         ...state,
-        isFetchingMore: false
+        fetchMoreId: null
       };
     case actions.SELECT_MEDIA:
       return {
