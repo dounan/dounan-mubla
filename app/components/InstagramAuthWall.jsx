@@ -1,5 +1,16 @@
 import React, {Component, PropTypes} from 'react'
 import Button from './Button'
+import jsvars from './vars'
+
+const AUTH_STYLE = {
+  textAlign: 'center'
+};
+
+const INSTR_STYLE = {
+  color: jsvars.gray,
+  fontSize: 24,
+  marginBottom: 20
+};
 
 /**
  * If there is no instagram token, renders UI to get token.
@@ -24,9 +35,14 @@ class InstagramAuthWall extends Component {
   renderAuth = () => {
     const {onAuthClick} = this.props;
     return (
-      <Button onClick={onAuthClick}>
-        Authorize Instagram
-      </Button>
+      <div style={AUTH_STYLE}>
+        <div style={INSTR_STYLE}>
+          Login to Instagram to get started.
+        </div>
+        <Button styleType='primary' onClick={onAuthClick}>
+          Login
+        </Button>
+      </div>
     );
   };
 }
