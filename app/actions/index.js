@@ -81,6 +81,14 @@ const requestMoreMediaError = (mediaStoreKey, fetchMoreId) => ({
   fetchMoreId
 });
 
+export const recentMediaIfNone = (mediaStoreKey) => (dispatch, getState) => {
+  const mediaList = get(getState(), ['mediaStore', mediaStoreKey, 'mediaList']);
+  if (mediaList) {
+    return;
+  }
+  dispatch(recentMedia(mediaStoreKey));
+};
+
 export const recentMedia = (mediaStoreKey) => (dispatch, getState) => {
   const state = getState();
   const instaToken = state.instagram.token;

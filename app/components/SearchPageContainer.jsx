@@ -44,7 +44,7 @@ function mapStateToProps(state, ownProps) {
   return {
     searchQuery: get(ownProps, 'location.query.q', ''),
     mediaList: mediaList,
-    isLoadingPage: media.fetchId && mediaList.length === 0,
+    isLoadingPage: media.fetchId,
     isLoadingMore: !!media.fetchMoreId,
     canSelect: true,
     selectedMediaIds: media.selectedMediaIds,

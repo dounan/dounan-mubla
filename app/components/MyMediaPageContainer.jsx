@@ -31,7 +31,7 @@ function mapStateToProps(state, ownProps) {
   const mediaList = get(media, 'mediaList', []);
   return {
     mediaList: mediaList,
-    isLoadingPage: media.fetchId && mediaList.length === 0,
+    isLoadingPage: !!media.fetchId,
     isLoadingMore: !!media.fetchMoreId,
     canSelect: true,
     selectedMediaIds: media.selectedMediaIds,
@@ -45,7 +45,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
   return {
     onInstagramToken: (token) => {
-      if (token) dispatch(actions.recentMedia(MEDIA_STORE_KEY));
+      if (token) dispatch(actions.recentMediaIfNone(MEDIA_STORE_KEY));
     },
     onLoadMoreMedia: () => dispatch(actions.moreRecentMedia(MEDIA_STORE_KEY)),
     onItemCheckClick: ({id}) => dispatch(actions.toggleSelectMedia(MEDIA_STORE_KEY, id)),
