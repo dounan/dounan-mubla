@@ -7,7 +7,7 @@ class Container extends Component {
   componentWillMount() {
     const {dispatch, params} = this.props;
     dispatch(actions.setInstaAccessToken(params.token));
-    dispatch(actions.gotoBrowse());
+    dispatch(actions.gotoMyMedia());
   };
 
   render() {
