@@ -1,9 +1,10 @@
 import React, {Component, PropTypes} from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import NavBarContainer from './NavBarContainer'
 import BrowseSelectedBarContainer from './BrowseSelectedBarContainer'
+import css from './Header.css'
 import * as pt from './propTypes'
 import jsvars from './vars'
-import Visible from './Visible'
 
 const WRAPPER_STYLE = {
   position: 'fixed',
@@ -15,36 +16,61 @@ const WRAPPER_STYLE = {
   boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)'
 };
 
-const COVER_STYLE = {
-  position: 'absolute',
-  top: 0, 
-  left: 0,
-  width: '100%',
-  height: '100%'
-};
-
 class Header extends Component {
 
   static propTypes = {
     routeLocation: pt.ROUTE_LOCATION,
     myMediaSelectedBarVisible: PropTypes.bool,
     searchSelectedBarVisible: PropTypes.bool
-  }
+  };
 
   render() {
     const p = this.props;
+    const transitionName = {
+      appear: css.animEnter,
+      appearActive: css.animEnterActive,
+      enter: css.animEnter,
+      enterActive: css.animEnterActive,
+      leave: css.animLeave,
+      leaveActive: css.animLeaveActive
+    };
     return (
       <div style={WRAPPER_STYLE}>
         <NavBarContainer routeLocation={p.routeLocation} />
-        <Visible visible={p.myMediaSelectedBarVisible} style={COVER_STYLE}>
-          <BrowseSelectedBarContainer mediaStoreKey='myMedia' />
-        </Visible>
-        <Visible visible={p.searchSelectedBarVisible} style={COVER_STYLE}>
-          <BrowseSelectedBarContainer mediaStoreKey='search' />
-        </Visible>
+        <ReactCSSTransitionGroup
+            transitionName={transitionName}
+            transitionEnterTimeout={300}
+            transitionLeaveTimeout={300}>
+          {this.renderMyMediaSelected()}
+          {this.renderSearchSelected()}
+        </ReactCSSTransitionGroup>
       </div>
     );
-  }
+  };
+
+  renderMyMediaSelected = () => {
+    const p = this.props;
+    if (!p.myMediaSelectedBarVisible) {
+      return null;
+    }
+    return (
+      <div className={css.cover}>
+        <BrowseSelectedBarContainer mediaStoreKey='myMedia' />
+      </div>
+    );
+  };
+
+  renderSearchSelected = () => {
+    const p = this.props;
+    if (!p.searchSelectedBarVisible) {
+      return null;
+    }
+    return (
+      <div className={css.cover}>
+        <BrowseSelectedBarContainer mediaStoreKey='search' />
+      </div>
+    );
+  };
 }
 
 export default Header;
