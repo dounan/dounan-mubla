@@ -1,5 +1,8 @@
+import classNames from 'classnames'
 import React, {Component, PropTypes} from 'react'
 import nextLargerOrLargest from '../util/nextLargerOrLargest'
+import {getIcon} from './icons'
+import css from './MediaThumb.css'
 import Thumb from './Thumb'
 import * as pt from './propTypes'
 
@@ -11,9 +14,22 @@ class MediaThumb extends Component {
   };
 
   render() {
-    // TODO: render video icon for video media
     return (
-      <Thumb url={this.bestUrl()} />
+      <div className={css.wrapper}>
+        {this.renderVideoIcon()}
+        <Thumb url={this.bestUrl()} />
+      </div>
+    );
+  };
+
+  renderVideoIcon = () => {
+    const {media} = this.props;
+    if (media.type !== 'video') {
+      return null;
+    }
+    const iconClass = classNames(css.icon, getIcon('video'));
+    return (
+      <span className={iconClass} />
     );
   };
 

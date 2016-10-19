@@ -42,7 +42,7 @@ class SelectableMediaThumb extends Component {
             canSelect={canSelect}
             onCheckClick={onCheckClick}
             hideUntilHover={true}
-            checkZIndex={1}
+            checkZIndex={2}
             style={WRAPPER_STYLE}>
           <div className={css.hoverFade} />
           <div className={css.selectedFade} />

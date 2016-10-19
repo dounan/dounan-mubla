@@ -15,7 +15,8 @@ export function authUrl() {
 // Converts an instagram media object to mubla media object.
 export function toMedia(o) {
   const media = {
-    id: uuid.v4()
+    id: uuid.v4(),
+    type: o.type
   };
   if (o.images) {
     media.images = [o.images.low_resolution, o.images.standard_resolution, o.images.thumbnail];

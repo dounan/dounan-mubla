@@ -8,7 +8,8 @@ const iconMap = {
   checkCircle: addFa(fa['fa-check-circle']),
   close: addFa(fa['fa-times']),
   myMedia: addFa(fa['fa-th']),
-  search: addFa(fa['fa-search'])
+  search: addFa(fa['fa-search']),
+  video: addFa(fa['fa-video-camera'])
 };
 
 export const getIcon = (name) => {
