@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import omit from 'lodash/omit'
 import uuid from 'node-uuid'
 import * as api from '../api'
 import * as insta from './instagram'
@@ -307,6 +308,26 @@ export const gotoSearch = (searchQuery) => push({
 });
 
 export const gotoAlbumList = () => push('/albums');
+
+export const addQueryParams = (params) => (dispatch, getState) => {
+  const state = getState();
+  const curLoc = get(state, 'routing.locationBeforeTransitions', {});
+  const newLoc = {
+    ...curLoc,
+    query: Object.assign({}, curLoc.query, params)
+  };
+  dispatch(push(newLoc));
+};
+
+export const removeQueryParams = (keys) => (dispatch, getState) => {
+  const state = getState();
+  const curLoc = get(state, 'routing.locationBeforeTransitions', {});
+  const newLoc = {
+    ...curLoc,
+    query: omit(curLoc.query, keys)
+  };
+  dispatch(push(newLoc));
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Misc

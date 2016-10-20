@@ -16,14 +16,18 @@ class MyMediaPage extends Component {
     isLoadingMore: PropTypes.bool,
     onLoadMoreMedia: PropTypes.func.isRequired,
 
-    maxRowHeight: PropTypes.number.isRequired,
-    rowSpacing: PropTypes.number,
-    colSpacing: PropTypes.number,
-
     canSelect: PropTypes.bool,
     selectedMediaIds: PropTypes.instanceOf(Set),
     // onItemCheckClick(mediaItem)
     onItemCheckClick: PropTypes.func,
+
+    onItemClick: PropTypes.func,
+    fullscreenMediaIdx: PropTypes.number,
+    onCloseFullscreenMedia: PropTypes.func,
+
+    maxRowHeight: PropTypes.number.isRequired,
+    rowSpacing: PropTypes.number,
+    colSpacing: PropTypes.number,
 
     windowWidth: PropTypes.number.isRequired,
     windowHeight: PropTypes.number.isRequired,

@@ -16,6 +16,7 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.2s, visibility 0s ease 0.2s;
+  pointer-events: none;
 }
 
 .wrapper:not(.selected):hover .hoverFade {
@@ -35,11 +36,17 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.2s, visibility 0s ease 0.2s;
+  pointer-events: none;
 }
 
 .selected .selectedFade {
   visibility: visible;
   opacity: 0.6;
   transition: opacity 0.2s;
+}
+
+.thumbBtn {
+  width: 100%;
+  height: 100%;
 }
 

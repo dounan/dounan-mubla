@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import React, {Component, PropTypes} from 'react'
+import Button from './Button'
 import CheckSelect from './CheckSelect'
 import MediaThumb from './MediaThumb'
 import * as pt from './propTypes'
@@ -17,7 +18,8 @@ class SelectableMediaThumb extends Component {
     targetThumbHeight: PropTypes.number.isRequired,
     isSelected: PropTypes.bool,
     canSelect: PropTypes.bool,
-    onCheckClick: PropTypes.func
+    onCheckClick: PropTypes.func,
+    onClick: PropTypes.func
   };
 
   render() {
@@ -27,6 +29,7 @@ class SelectableMediaThumb extends Component {
       isSelected,
       canSelect,
       onCheckClick,
+      onClick,
       ...other
     } = this.props;
 
@@ -46,9 +49,14 @@ class SelectableMediaThumb extends Component {
             style={WRAPPER_STYLE}>
           <div className={css.hoverFade} />
           <div className={css.selectedFade} />
-          <MediaThumb
-              media={media}
-              targetThumbHeight={targetThumbHeight} />
+          <Button
+              className={css.thumbBtn}
+              styleType='empty'
+              onClick={onClick}>
+            <MediaThumb
+                media={media}
+                targetThumbHeight={targetThumbHeight}/>
+          </Button>
         </CheckSelect>
       </div>
     );

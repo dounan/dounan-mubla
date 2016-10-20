@@ -17,6 +17,7 @@ class MediaGrid extends Component {
     selectedMediaIds: PropTypes.instanceOf(Set),
     // onItemCheckClick(mediaItem)
     onItemCheckClick: PropTypes.func,
+    onItemClick: PropTypes.func,
 
     maxWidth: PropTypes.number.isRequired,
     maxRowHeight: PropTypes.number.isRequired,
@@ -86,6 +87,13 @@ class MediaGrid extends Component {
     }
   };
 
+  handleItemClick = (mediaItem) => {
+    const {onItemClick} = this.props;
+    if (onItemClick) {
+      onItemClick(mediaItem);
+    }
+  };
+
   processMediaList = (props) => {
     const {mediaList} = props;
     const toViewProps = this.toViewProps.bind(null, props);
@@ -109,6 +117,7 @@ class MediaGrid extends Component {
       canSelect: canSelect,
       isSelected: isSelected,
       onCheckClick: this.handleCheckClick.bind(null, mediaItem),
+      onClick: this.handleItemClick.bind(null, mediaItem),
       targetThumbHeight: maxRowHeight
     };
   };

@@ -5,6 +5,7 @@ const addFa = (className) => fa.fa + " " + className;
 const iconMap = {
   add: addFa(fa['fa-plus']),
   album: addFa(fa['fa-book']),
+  back: addFa(fa['fa-arrow-left']),
   checkCircle: addFa(fa['fa-check-circle']),
   close: addFa(fa['fa-times']),
   myMedia: addFa(fa['fa-th']),
